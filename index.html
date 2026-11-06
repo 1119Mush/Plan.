@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSE 溫習規劃器 · 三層課程樹</title>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#fff; --line:#e4e9f2; --txt:#1b2433; --mut:#6b7890;
+  --acc:#2f6fed; --acc2:#eaf1ff; --red:#e5484d; --red2:#fdecec;
+  --amb:#d97706; --amb2:#fff7e8; --grn:#16a34a; --grn2:#eaf7ee;
+  --sh:0 1px 2px rgba(20,30,60,.05), 0 4px 14px rgba(20,30,60,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:var(--bg); color:var(--txt); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  position:sticky; top:0; z-index:20; background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line);
+}
+.hd{max-width:1080px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+h1{font-size:16px;margin:0;letter-spacing:.3px}
+h1 span{color:var(--acc)}
+#stats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;font-size:12px}
+.pill{background:var(--acc2);color:var(--acc);border-radius:999px;padding:3px 10px;font-weight:600}
+.pill.warn{background:var(--red2);color:var(--red)}
+.pill.ok{background:var(--grn2);color:var(--grn)}
+nav{max-width:1080px;margin:0 auto;padding:8px 16px 0;display:flex;gap:4px}
+nav button{
+  border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;
+  font:inherit;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;
+}
+nav button.on{color:var(--acc);border-bottom-color:var(--acc);background:#fff}
+main{max-width:1080px;margin:0 auto;padding:16px;padding-bottom:80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
+.card h3{margin:2px 0 12px;font-size:13px;color:var(--mut);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 12px;font-weight:600;color:var(--txt)}
+.btn:hover{border-color:#c9d4e6;background:#fafbfe}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.primary:hover{background:#255dd0}
+.btn.danger{background:#fff;border-color:#f3c9cb;color:var(--red)}
+.btn.danger:hover{background:var(--red2)}
+.btn.sm{padding:3px 9px;font-size:12px;border-radius:7px}
+.bar{flex:1;min-width:60px;height:7px;background:#eef1f7;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#5b8cf5,#2f6fed);border-radius:99px;transition:width .3s}
+.mut{color:var(--mut);font-size:12px}
+.tag{font-size:11px;padding:2px 8px;border-radius:99px;background:#f0f3f9;color:var(--mut);font-weight:600;white-space:nowrap}
+.tag.red{background:var(--red2);color:var(--red)}
+.tag.amb{background:var(--amb2);color:var(--amb)}
+
+/* ── banner ── */
+.banner{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;border:1px solid}
+.banner.red{background:var(--red2);border-color:#f6cdcf;color:#a02026}
+.banner.amb{background:var(--amb2);border-color:#f3e0bd;color:#8a5a05}
+.banner b{font-weight:700}
+
+/* ── today ── */
+.datebar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.datebar .d{font-size:17px;font-weight:700;letter-spacing:.4px}
+.datebar .btn{margin-left:0}
+.summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:110px;flex:1;box-shadow:var(--sh)}
+.stat .k{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.4px}
+.stat .v{font-size:19px;font-weight:800;margin-top:2px}
+.stat .v small{font-size:12px;font-weight:600;color:var(--mut)}
+
+.row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;border:1px solid transparent}
+.row:hover{background:#fafbfe;border-color:var(--line)}
+.row.item{cursor:pointer}
+.row.item .nm{font-weight:600;flex:0 0 auto;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.item .sub{color:var(--mut);font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.item .min{margin-left:auto;font-variant-numeric:tabular-nums;font-size:12px;color:var(--mut);font-weight:600;white-space:nowrap}
+.row.done{opacity:.55}
+.row.done .nm{text-decoration:line-through}
+.chk{
+  width:22px;height:22px;flex:0 0 22px;border-radius:7px;border:1.6px solid #c9d4e6;background:#fff;
+  display:grid;place-items:center;font-size:13px;color:transparent;padding:0;line-height:1;
+}
+.chk:hover{border-color:var(--acc)}
+.chk.on{background:var(--grn);border-color:var(--grn);color:#fff}
+.time{font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;color:var(--acc);background:var(--acc2);padding:2px 8px;border-radius:7px;white-space:nowrap}
+
+/* ── course tree ── */
+.subjhead{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.subjhead:hover{background:#fafbfe;border-color:var(--line)}
+.subjhead .nm{font-weight:800;font-size:15px}
+.caret{width:14px;color:var(--mut);font-size:10px;flex:0 0 14px}
+.topics{margin:2px 0 10px 14px;border-left:2px solid #eef1f7;padding-left:10px}
+.topichead{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent}
+.topichead:hover{background:#fafbfe;border-color:var(--line)}
+.topichead .nm{font-weight:700;font-size:13.5px}
+.items{margin:2px 0 6px 14px;border-left:2px dashed #eef1f7;padding-left:10px}
+.fam{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.fam0{background:#f0f2f7;color:#8494ad}
+.fam1{background:#e8f0ff;color:#2f6fed}
+.fam2{background:#e6f6ef;color:#12865a}
+.fam3{background:#e9f7e5;color:#3f8f1f}
+.fam4{background:#dcf5e2;color:#0f7a37}
+.addline{padding:4px 10px}
+
+/* ── tables ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:800;border-bottom:0;background:#fafbfe}
+input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
+  font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--txt);width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc2);border-color:var(--acc)}
+textarea{resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+label.fld{display:block;font-size:12px;color:var(--mut);font-weight:600}
+label.fld input,label.fld select,label.fld textarea{margin-top:4px}
+.hint{font-size:12px;color:var(--mut);margin:8px 0 0}
+
+/* ── modal ── */
+.modal-back{position:fixed;inset:0;background:rgba(18,26,44,.42);display:grid;place-items:center;z-index:100;padding:16px}
+.modal{background:#fff;border-radius:16px;padding:18px 20px;width:min(420px,100%);box-shadow:0 20px 60px rgba(10,20,50,.28)}
+.modal h3{margin:0 0 14px;font-size:15px;color:var(--txt);text-transform:none;letter-spacing:0}
+.modal label{display:block;font-size:12px;color:var(--mut);font-weight:600;margin-bottom:10px}
+.modal label input,.modal label select{margin-top:4px}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.mbtns .danger{margin-right:auto}
+.empty{color:var(--mut);text-align:center;padding:26px 10px;font-size:13px}
+code{background:#eef1f7;padding:1px 5px;border-radius:5px;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <h1>DSE 溫習規劃器 <span>· 三層課程樹</span></h1>
+    <div id="stats"></div>
+  </div>
+  <nav id="tabs">
+    <button data-act="tab" data-tab="today">今日</button>
+    <button data-act="tab" data-tab="course">課程</button>
+    <button data-act="tab" data-tab="load">負荷</button>
+    <button data-act="tab" data-tab="settings">設定</button>
+  </nav>
+</header>
+
+<main id="app"></main>
+<script>
+/* ══════════════════════════════════════════════════════════
+   0. 常數
+   ══════════════════════════════════════════════════════════ */
+const FAM = ["未學","學過","複習1","複習2","熟練"];
+const UNIT_MIN = { concept:25, memorize:12, calc:2.5, essay:45, practical:30, source:20 };
+const KIND_LABEL = {
+  concept:"理解概念", memorize:"背誦", calc:"計算操練",
+  essay:"長答／寫作", practical:"技能／實驗", source:"史料／數據"
+};
+const DIFF_W  = {1:0.8, 2:1.0, 3:1.3};
+const DIFF_LB = {1:"易", 2:"中", 3:"難"};
+const FAM_MULT = [1.00, 0.60, 0.35, 0.20, 0.08];
+const PASTPAPER_ADD = { concept:0.15, calc:0.40, essay:0.40, memorize:0.20, practical:0.30, source:0.25 };
+const REVIEW_GAPS = [1, 3, 7, 14, 30, 60];
+const DAY = 86400000;
+
+/* ══════════════════════════════════════════════════════════
+   1. 種子資料
+   ══════════════════════════════════════════════════════════ */
+const DSE_TOPICS = {
+  chinese: ["卷一 文言範文（12篇）","卷一 白話文閱讀","卷一 文言字詞句法",
+            "卷二 記敘描寫文","卷二 議論說明文","卷二 實用文",
+            "卷三 聆聽綜合","卷四 小組討論","校本評核"],
+  english: ["Paper 1 Part A","Paper 1 Part B1/B2","Paper 2 Short Task",
+            "Paper 2 Long Task","Paper 3 Part A","Paper 3 Part B",
+            "Paper 4 Group Interaction","Paper 4 Individual Response","SBA"],
+  math:    ["二次方程與函數","指數與對數","數列","不等式與線性規劃",
+            "三角學","圓形性質","坐標幾何","立體圖形","概率","統計",
+            "函數圖像變換","多項式"],
+  physics: ["力學（運動學）","力學（力與動量）","熱學","波動","光學",
+            "電與磁","電路","原子物理","放射現象"],
+  chemistry:["原子結構與週期表","化學鍵","酸鹼與鹽","氧化還原","化學平衡",
+            "反應速率","能量學","有機化學","分析化學","工業化學"],
+  biology: ["細胞與代謝","遺傳與分子生物","生態系統","人體生理（神經／內分泌）",
+            "人體生理（循環／呼吸）","植物生理","生物工程","演化"],
+  econ:    ["微觀：需求供應","微觀：彈性與市場","微觀：廠商理論",
+            "宏觀：國民收入","宏觀：貨幣與銀行","宏觀：財政政策","國際貿易"],
+  geography:["自然地理：地貌","自然地理：氣候","自然地理：生態",
+             "人文地理：人口","人文地理：城市","人文地理：農業工業","區域研究"],
+  history: ["中國史：上古至清","中國史：近代","中國史：現代",
+            "世界史：一戰前","世界史：兩戰","世界史：冷戰"],
+  bafs:    ["會計：簿記","會計：財務報表","會計：成本會計",
+            "商業管理：管理功能","商業管理：營銷","商業管理：財務管理"],
+  ict:     ["電腦系統","程式編寫","數據結構","網絡與互聯網","數據庫","資訊系統","社會議題"],
+  csd:     ["主題一：一國兩制","主題二：公民權利","主題三：可持續發展"]
+};
+
+const SUBJ_NAME = {
+  chinese:"中文", english:"英文", math:"數學（必修部分）", physics:"物理",
+  chemistry:"化學", biology:"生物", econ:"經濟", geography:"地理",
+  history:"歷史", bafs:"BAFS", ict:"ICT", csd:"公民與社會發展"
+};
+const SUBJ_ROUTINE = {
+  chinese:210, english:240, math:210, physics:180, chemistry:180, biology:210,
+  econ:150, geography:150, history:180, bafs:150, ict:150, csd:120
+};
+// 預設考試日（若已過去會自動順延一年）
+const SUBJ_EXAM = {
+  chinese:"2027-04-09", english:"2027-04-10", math:"2027-04-12", physics:"2027-04-19",
+  chemistry:"2027-04-21", biology:"2027-04-23", econ:"2027-04-27", geography:"2027-04-28",
+  history:"2027-04-30", bafs:"2027-05-03", ict:"2027-05-04", csd:"2027-04-16"
+};
+// 每個科目的預設細項模板：[名稱, kind, amount, difficulty]
+const GEN = {
+  chinese: [["範文／課文理解","concept",1,2],["字詞與語基","memorize",10,2],["寫作練習","essay",1,3]],
+  english: [["語法與詞彙","memorize",15,2],["閱讀理解","concept",1,2],["寫作練習","essay",1,3]],
+  math:    [["概念理解","concept",1,2],["運算操練","calc",15,2],["進階應用","calc",10,3]],
+  physics: [["概念理解","concept",1,2],["計算操練","calc",12,3],["實驗與圖表","practical",1,2]],
+  chemistry:[["概念理解","concept",1,2],["計算操練","calc",12,3],["實驗與圖表","practical",1,2]],
+  biology: [["概念理解","concept",1,2],["圖表與流程","practical",1,2],["長答練習","essay",1,3]],
+  econ:    [["概念理解","concept",1,2],["圖表分析","practical",1,2],["題目操練","calc",12,3]],
+  geography:[["概念理解","concept",1,2],["地圖／數據","practical",1,2],["個案分析","source",1,3]],
+  history: [["史實梳理","concept",1,2],["史料分析","source",1,3],["論述練習","essay",1,3]],
+  bafs:    [["概念理解","concept",1,2],["計算操練","calc",12,3],["個案分析","source",1,2]],
+  ict:     [["概念理解","concept",1,2],["編程／操作","practical",1,2],["題目操練","calc",10,3]],
+  csd:     [["概念理解","concept",1,2],["資料分析","source",1,2],["議題探究","essay",1,3]],
+  default: [["概念理解","concept",1,2],["題目操練","calc",10,2]]
+};
+
+/* ══════════════════════════════════════════════════════════
+   2. 工具函數
+   ══════════════════════════════════════════════════════════ */
+const pad = n => String(n).padStart(2,"0");
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function parseDate(ds){ const [y,m,d] = ds.split("-").map(Number); return Date.UTC(y, m-1, d); }
+function daysBetween(a,b){ return Math.round((parseDate(b) - parseDate(a)) / DAY); }
+function addDays(ds,n){ const t = parseDate(ds) + n*DAY; const d = new Date(t);
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`; }
+function toTime(min){ return `${pad(Math.floor(min/60))}:${pad(Math.round(min%60))}`; }
+function parseTime(s){ const m = /^(\d{1,2}):(\d{2})$/.exec(String(s).trim()); return m ? (+m[1])*60 + (+m[2]) : NaN; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmtMin(m){
+  m = Math.round(m);
+  if (m >= 60) { const h = (m/60); return (Math.abs(h - Math.round(h)) < 0.05 ? String(Math.round(h)) : h.toFixed(1)) + " h"; }
+  return m + " min";
+}
+function rollForward(ds){
+  let d = ds;
+  let guard = 0;
+  while (daysBetween(todayStr(), d) < 20 && guard++ < 30) {
+    const [y,m,dd] = d.split("-").map(Number);
+    d = `${y+1}-${pad(m)}-${pad(dd)}`;
+  }
+  return d;
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. 狀態 / 儲存
+   ══════════════════════════════════════════════════════════ */
+const STORE_KEY = "dse_planner_v3";
+
+function makeSubject(sid, over){
+  over = over || {};
+  const names = DSE_TOPICS[sid] || [];
+  const gen = GEN[sid] || GEN.default;
+  return {
+    id: sid,
+    name: over.name || SUBJ_NAME[sid] || sid,
+    examDate: over.examDate || rollForward(SUBJ_EXAM[sid] || addDays(todayStr(), 150)),
+    routineMinPerWeek: over.routineMinPerWeek ?? (SUBJ_ROUTINE[sid] ?? 180),
+    topics: names.map((tn, ti) => ({
+      id: `${sid}.t${ti}`,
+      name: tn,
+      items: gen.map(([nm, kind, amount, diff], j) => ({
+        id: `${sid}.t${ti}.i${j}`,
+        name: nm, kind, amount, difficulty: diff,
+        familiarity: 0, nextReviewAt: null
+      }))
+    }))
+  };
+}
+
+function defaultState(){
+  return {
+    settings: {
+      dayStart: "07:00",
+      dayEnd: "23:00",
+      breakMin: 5,
+      maxBlockMin: 50,
+      minBlockMin: 15,
+      maxStudyMinPerDay: 240,
+      busy: [{ start:"08:00", end:"15:30" }]
+    },
+    subjects: ["chinese","english","math","physics"].map(id => makeSubject(id)),
+    done: {}
+  };
+}
+
+let state = loadState();
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return defaultState();
+    const s = JSON.parse(raw);
+    if (!s || !s.settings || !Array.isArray(s.subjects)) return defaultState();
+    s.done = s.done || {};
+    return s;
+  } catch(e){ return defaultState(); }
+}
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
+
+/* ══════════════════════════════════════════════════════════
+   4. UI 狀態
+   ══════════════════════════════════════════════════════════ */
+const ui = { tab: "today", date: todayStr(), collapsed: new Set() };
+
+/* ══════════════════════════════════════════════════════════
+   5. 三層時間估算
+   ══════════════════════════════════════════════════════════ */
+function itemFirstMin(it){
+  const unit = UNIT_MIN[it.kind] ?? 25;
+  const qty = Math.max(1, it.amount ?? 1);
+  return Math.max(10, Math.round(unit * qty / 5) * 5);
+}
+function itemRemainingMin(it, subj, today){
+  let m = itemFirstMin(it) * (DIFF_W[it.difficulty] ?? 1) * FAM_MULT[it.familiarity ?? 0];
+  const d = daysBetween(today, subj.examDate);
+  if (d <= 60) m += itemFirstMin(it) * (PASTPAPER_ADD[it.kind] ?? 0.25);
+  return Math.round(m);
+}
+const topicFirstMin = tp => tp.items.reduce((a,it) => a + itemFirstMin(it), 0);
+const topicRemainingMin = (tp, subj, today) =>
+  tp.items.reduce((a,it) => a + itemRemainingMin(it, subj, today), 0);
+const subjectRemainingMin = (subj, today) =>
+  subj.topics.reduce((a,tp) => a + topicRemainingMin(tp, subj, today), 0);
+
+function progressOf(items){
+  let total = 0, done = 0;
+  for (const it of items){
+    const f = itemFirstMin(it);
+    total += f;
+    done  += f * (1 - FAM_MULT[it.familiarity ?? 0]);
+  }
+  return total ? done / total : 0;
+}
+const allItems = subj => subj.topics.flatMap(tp => tp.items);
+
+function getSubject(id){ return state.subjects.find(s => s.id === id); }
+function findItemById(id){
+  for (const s of state.subjects)
+    for (const tp of s.topics)
+      for (const it of tp.items)
+        if (it.id === id) return { subj:s, tp, it };
+  return null;
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. 時間表：空閒區間 / 節數
+   ══════════════════════════════════════════════════════════ */
+function freeIntervals(dateStr){
+  const st = state.settings;
+  const ds = parseTime(st.dayStart), de = parseTime(st.dayEnd);
+  if (isNaN(ds) || isNaN(de) || de <= ds) return [];
+  let ivs = [[ds, de]];
+  for (const b of st.busy){
+    const bs = parseTime(b.start), be = parseTime(b.end);
+    if (isNaN(bs) || isNaN(be) || be <= bs) continue;
+    const out = [];
+    for (const [x,y] of ivs){
+      if (be <= x || bs >= y) { out.push([x,y]); continue; }
+      if (bs > x) out.push([x, bs]);
+      if (be < y) out.push([be, y]);
+    }
+    ivs = out;
+  }
+  return ivs.filter(([x,y]) => y - x >= 5).sort((a,b) => a[0] - b[0]);
+}
+
+function makeSlots(ivs){
+  const st = state.settings;
+  const slots = [];
+  for (const [a,b] of ivs){
+    let t = a;
+    while (t + st.minBlockMin <= b){
+      const len = Math.min(st.maxBlockMin, b - t);
+      slots.push([t, t + len]);
+      t += len + st.breakMin;
+    }
+  }
+  return slots;
+}
+
+function dayCapacity(dateStr){
+  const st = state.settings;
+  const free = freeIntervals(dateStr).reduce((a,[x,y]) => a + (y - x), 0);
+  const eff  = st.maxBlockMin / (st.maxBlockMin + Math.max(1, st.breakMin));
+  return Math.max(0, Math.min(free * eff, st.maxStudyMinPerDay));
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. 倒數反推 + 負荷檢查
+   ══════════════════════════════════════════════════════════ */
+function weeklyDemand(todayStr){
+  return state.subjects.map(s => {
+    const days   = Math.max(1, daysBetween(todayStr, s.examDate));
+    const remain = subjectRemainingMin(s, todayStr);
+    const examWk = remain / (days / 7);
+    const routineWk = s.routineMinPerWeek ?? 120;
+    return {
+      subj: s, remain, days, examWk, routineWk,
+      target: Math.max(examWk, routineWk)
+    };
+  }).filter(x => x.remain > 0);
+}
+
+function loadCheck(todayStr){
+  const demand = weeklyDemand(todayStr);
+  let avail = 0;
+  for (let i = 0; i < 7; i++) avail += dayCapacity(addDays(todayStr, i));
+  const need = demand.reduce((a,x) => a + x.target, 0);
+  const scale = need > avail && need > 0 ? avail / need : 1;
+  return { demand, avail, need, overload: Math.max(0, need - avail), scale };
+}
+
+function dailyTargets(todayStr){
+  const { demand, scale } = loadCheck(todayStr);
+  const map = {};
+  for (const d of demand) map[d.subj.id] = (d.target * scale) / 7;
+  return map;
+}
+
+/* ══════════════════════════════════════════════════════════
+   8. 排程
+   ══════════════════════════════════════════════════════════ */
+function pickItem(subj, today, exclude){
+  const pool0 = [];
+  for (const tp of subj.topics)
+    for (const it of tp.items)
+      if (!exclude.has(it.id)) pool0.push({ tp, it });
+  if (!pool0.length) return null;
+
+  const due = pool0.filter(x => x.it.nextReviewAt && x.it.nextReviewAt <= today);
+  const pool = due.length ? due : pool0.filter(x => (x.it.familiarity ?? 0) < 4);
+  if (!pool.length) return null;
+
+  pool.sort((a,b) => {
+    const da = (a.it.nextReviewAt && a.it.nextReviewAt <= today) ? 1 : 0;
+    const db = (b.it.nextReviewAt && b.it.nextReviewAt <= today) ? 1 : 0;
+    if (da !== db) return db - da;                                   // 到期複習先
+    const fa = a.it.familiarity ?? 0, fb = b.it.familiarity ?? 0;
+    if (fa !== fb) return fa - fb;                                   // 未學先
+    return (b.it.difficulty ?? 2) - (a.it.difficulty ?? 2);          // 難的先
+  });
+  return pool[0];
+}
+
+function buildPlan(today){
+  const st = state.settings;
+  const slots = makeSlots(freeIntervals(today));
+  const tgt   = dailyTargets(today);
+  const cap   = dayCapacity(today);
+  const doneToday = state.done[today] || {};
+  const exclude = new Set(Object.keys(doneToday));
+  const used = {};
+  const plan = [];
+  let total = 0;
+
+  for (const [ss,se] of slots){
+    if (cap - total < st.minBlockMin) break;
+
+    const cand = Object.keys(tgt)
+      .filter(id => (used[id] || 0) < tgt[id] - 1)
+      .sort((a,b) => (used[a] || 0)/tgt[a] - (used[b] || 0)/tgt[b]);
+    if (!cand.length) break;
+
+    const subj = getSubject(cand[0]);
+    if (!subj) { tgt[cand[0]] = 0; continue; }
+
+    const pick = pickItem(subj, today, exclude);
+    if (!pick) { tgt[subj.id] = 0; continue; }
+
+    const remainTgt = tgt[subj.id] - (used[subj.id] || 0);
+    let len = Math.min(se - ss, st.maxBlockMin, remainTgt, cap - total);
+    if (len < st.minBlockMin) { tgt[subj.id] = used[subj.id] || 0; continue; }
+
+    len = Math.round(len);
+    plan.push({
+      subjId: subj.id, subject: subj.name,
+      topicId: pick.tp.id, topic: pick.tp.name,
+      itemId: pick.it.id, item: pick.it.name,
+      kind: pick.it.kind,
+      start: toTime(ss), end: toTime(ss + len), min: len
+    });
+    used[subj.id] = (used[subj.id] || 0) + len;
+    exclude.add(pick.it.id);
+    total += len;
+  }
+  return plan;
+}
+
+/* ══════════════════════════════════════════════════════════
+   9. 完成 / 復原（SM-2 lite）
+   ══════════════════════════════════════════════════════════ */
+function completeItem(itemId){
+  const f = findItemById(itemId);
+  if (!f) return;
+  const d = ui.date;
+  const before = itemRemainingMin(f.it, f.subj, d);
+  const prevFam  = f.it.familiarity ?? 0;
+  const prevNext = f.it.nextReviewAt ?? null;
+
+  f.it.familiarity = Math.min(4, prevFam + 1);
+  const gap = REVIEW_GAPS[Math.min(f.it.familiarity, REVIEW_GAPS.length - 1)];
+  f.it.nextReviewAt = addDays(d, gap);
+
+  state.done[d] = state.done[d] || {};
+  state.done[d][itemId] = { min: before, prevFam, prevNext, at: Date.now() };
+  save(); render();
+}
+
+function undoItem(itemId){
+  const d = ui.date;
+  const rec = (state.done[d] || {})[itemId];
+  const f = findItemById(itemId);
+  if (!rec || !f) return;
+  f.it.familiarity = rec.prevFam;
+  f.it.nextReviewAt = rec.prevNext;
+  delete state.done[d][itemId];
+  if (!Object.keys(state.done[d]).length) delete state.done[d];
+  save(); render();
+}
+
+/* ══════════════════════════════════════════════════════════
+   10. 渲染
+   ══════════════════════════════════════════════════════════ */
+const bar = p => `<div class="bar"><i style="width:${Math.max(0,Math.min(100, Math.round(p*100)))}%"></i></div>`;
+
+function renderTop(){
+  const lc = loadCheck(ui.date);
+  const totalRemain = state.subjects.reduce((a,s) => a + subjectRemainingMin(s, ui.date), 0);
+  const el = document.getElementById("stats");
+  const over = lc.overload > 0;
+  el.innerHTML = `
+    <span class="pill">剩餘 ${fmtMin(totalRemain)}</span>
+    <span class="pill ${over ? "warn" : "ok"}">
+      每週需要 ${fmtMin(lc.need)} / 可用 ${fmtMin(lc.avail)}
+      ${over ? "· 超載 " + fmtMin(lc.overload) : ""}
+    </span>`;
+  document.querySelectorAll("#tabs button").forEach(b => {
+    b.classList.toggle("on", b.dataset.tab === ui.tab);
+  });
+}
+
+/* ── 今日 ── */
+function renderToday(){
+  const d = ui.date;
+  const lc = loadCheck(d);
+  const plan = buildPlan(d);
+  const doneMap = state.done[d] || {};
+  const tgt = dailyTargets(d);
+  const targetMin = Object.values(tgt).reduce((a,b) => a + b, 0);
+  const plannedMin = plan.reduce((a,p) => a + p.min, 0);
+  const doneMin = Object.values(doneMap).reduce((a,x) => a + (x.min || 0), 0);
+
+  let h = "";
+
+  // 日期列
+  h += `<div class="datebar">
+    <button class="btn sm" data-act="date-prev">‹ 前一日</button>
+    <span class="d">${d}</span>
+    <button class="btn sm" data-act="date-next">後一日 ›</button>
+    <button class="btn sm" data-act="date-today">回到今日</button>
+    <span class="mut" style="margin-left:auto">
+      可用 ${Math.round(dayCapacity(d))} 分 · 上限 ${state.settings.maxStudyMinPerDay} 分
+    </span>
+  </div>`;
+
+  // 負荷橫幅
+  if (lc.overload > 0){
+    h += `<div class="banner red">
+      ⚠️ <b>本週需要 ${fmtMin(lc.need)}，但你只有 ${fmtMin(lc.avail)}。</b>
+      已自動按比例縮放至 <b>${Math.round(lc.scale*100)}%</b>（每科等比縮，唔會砍死某一科）。
+      建議：降低某科熟悉度要求、延後非考試科、或提高每日上限。
+    </div>`;
+  } else if (lc.scale < 0.999){
+    h += `<div class="banner amb">已按可用時間等比縮放至 ${Math.round(lc.scale*100)}%。</div>`;
+  }
+
+  // 摘要
+  h += `<div class="summary">
+    <div class="stat"><div class="k">今日目標</div><div class="v">${Math.round(targetMin)}<small> 分</small></div></div>
+    <div class="stat"><div class="k">已排</div><div class="v">${plannedMin}<small> 分</small></div></div>
+    <div class="stat"><div class="k">已完成</div><div class="v">${doneMin}<small> 分</small></div></div>
+    <div class="stat"><div class="k">科目數</div><div class="v">${Object.keys(tgt).length}<small> 科</small></div></div>
+  </div>`;
+
+  // 已完成
+  const doneIds = Object.keys(doneMap);
+  if (doneIds.length){
+    h += `<div class="card"><h3>已完成 ${doneIds.length} 項</h3>`;
+    for (const id of doneIds){
+      const f = findItemById(id);
+      if (!f) continue;
+      h += `<div class="row item done">
+        <button class="chk on" data-act="undo-item" data-item="${esc(id)}" title="復原">✓</button>
+        <span class="nm">${esc(f.it.name)}</span>
+        <span class="sub">${esc(f.subj.name)} · ${esc(f.tp.name)}</span>
+        <span class="min">${Math.round(doneMap[id].min)} min</span>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+
+  // 計畫
+  h += `<div class="card"><h3>今日排程</h3>`;
+  if (!plan.length){
+    h += `<div class="empty">今日沒有可排的項目 —— 可能全部已完成、或可用時間不足。<br>
+      <span class="mut">檢查「設定」的作息與固定佔用時段。</span></div>`;
+  } else {
+    for (const p of plan){
+      h += `<div class="row item" data-act="jump" data-subj="${esc(p.subjId)}" data-topic="${esc(p.topicId)}">
+        <button class="chk" data-act="complete" data-item="${esc(p.itemId)}" title="標記完成">✓</button>
+        <span class="time">${p.start}–${p.end}</span>
+        <span class="nm">${esc(p.item)}</span>
+        <span class="sub">${esc(p.subject)} · ${esc(p.topic)} · ${KIND_LABEL[p.kind] || p.kind}</span>
+        <span class="min">${p.min} min</span>
+      </div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+/* ── 課程樹 ── */
+function renderCourse(){
+  let h = `<div class="card">`;
+  if (!state.subjects.length){
+    h += `<div class="empty">尚未有任何科目，去「設定」加入。</div>`;
+  }
+  for (const s of state.subjects){
+    const rem  = subjectRemainingMin(s, ui.date);
+    const prog = progressOf(allItems(s));
+    const dd   = daysBetween(ui.date, s.examDate);
+    const open = !ui.collapsed.has(s.id);
+    const soon = dd <= 60;
+
+    h += `<div class="subjhead" data-act="toggle" data-id="${esc(s.id)}">
+      <span class="caret">${open ? "▼" : "▶"}</span>
+      <span class="nm">${esc(s.name)}</span>
+      <span class="mut">剩餘 ${fmtMin(rem)}</span>
+      ${bar(prog)}
+      <span class="mut" style="width:38px;text-align:right">${Math.round(prog*100)}%</span>
+      <span class="tag ${soon ? "red" : ""}">倒數 ${dd} 日</span>
+    </div>`;
+
+    if (!open) continue;
+
+    h += `<div class="topics">`;
+    for (const tp of s.topics){
+      const trem = topicRemainingMin(tp, s, ui.date);
+      const tprog = progressOf(tp.items);
+      const topen = !ui.collapsed.has(tp.id);
+
+      h += `<div class="topichead" data-act="toggle" data-id="${esc(tp.id)}">
+        <span class="caret">${topen ? "▼" : "▶"}</span>
+        <span class="nm">${esc(tp.name)}</span>
+        <span class="mut">${fmtMin(trem)}</span>
+        ${bar(tprog)}
+        <span class="mut" style="width:38px;text-align:right">${Math.round(tprog*100)}%</span>
+        <button class="btn sm" data-act="add-item" data-s="${esc(s.id)}" data-t="${esc(tp.id)}" title="新增細項">＋</button>
+        <button class="btn sm danger" data-act="del-topic" data-s="${esc(s.id)}" data-t="${esc(tp.id)}" title="刪除 topic">✕</button>
+      </div>`;
+
+      if (!topen) continue;
+
+      h += `<div class="items">`;
+      for (const it of tp.items){
+        const first = itemFirstMin(it);
+        const left  = itemRemainingMin(it, s, ui.date);
+        const fam   = it.familiarity ?? 0;
+        const due   = it.nextReviewAt && it.nextReviewAt <= ui.date;
+        h += `<div class="row item" data-act="edit-item"
+                data-s="${esc(s.id)}" data-t="${esc(tp.id)}" data-i="${esc(it.id)}">
+          <span class="fam fam${fam}">${FAM[fam]}</span>
+          <span class="nm">${esc(it.name)}</span>
+          <span class="sub">${KIND_LABEL[it.kind] || it.kind} · ${it.amount}${it.kind==="calc"?" 題":""} · 難度${DIFF_LB[it.difficulty]||"中"}</span>
+          <span class="mut">${it.nextReviewAt ? (due ? `<b style="color:var(--red)">到期 ${it.nextReviewAt}</b>` : "下次 " + it.nextReviewAt) : "—"}</span>
+          <span class="min">${first} → ${left} min</span>
+        </div>`;
+      }
+      if (!tp.items.length) h += `<div class="empty" style="padding:10px">此 topic 未有細項</div>`;
+      h += `</div>`;
+    }
+    h += `<div class="addline">
+      <button class="btn sm" data-act="add-topic" data-s="${esc(s.id)}">＋ 新增 topic</button>
+      <button class="btn sm danger" data-act="del-subject" data-s="${esc(s.id)}" style="float:right">刪除科目</button>
+    </div>`;
+    h += `</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+/* ── 負荷 ── */
+function renderLoad(){
+  const lc = loadCheck(ui.date);
+  let h = "";
+
+  if (lc.overload > 0){
+    h += `<div class="banner red">
+      ⚠️ <b>本週需要 ${fmtMin(lc.need)}，可用只有 ${fmtMin(lc.avail)}，超載 ${fmtMin(lc.overload)}。</b>
+      計畫已按 ${Math.round(lc.scale*100)}% 等比縮放。可考慮：調低某科恆常配額、延後非考試科、或提高每日上限。
+    </div>`;
+  } else {
+    h += `<div class="banner amb" style="background:var(--grn2);border-color:#c9e9d4;color:#0f7a37">
+      ✅ 本週需要 ${fmtMin(lc.need)}，可用 ${fmtMin(lc.avail)}，餘裕 ${fmtMin(lc.avail - lc.need)}。
+    </div>`;
+  }
+
+  h += `<div class="card"><h3>各科需求（以 ${ui.date} 為基準，往後 7 日）</h3>
+  <table>
+    <thead><tr>
+      <th>科目</th><th>考試日</th><th class="num">倒數</th><th class="num">剩餘</th>
+      <th class="num">考試模式/週</th><th class="num">恆常/週</th><th class="num">採用/週</th>
+      <th style="width:110px">進度</th>
+    </tr></thead><tbody>`;
+
+  for (const x of lc.demand){
+    const s = x.subj;
+    const prog = progressOf(allItems(s));
+    const examSoon = x.days <= 60;
+    h += `<tr>
+      <td><b>${esc(s.name)}</b></td>
+      <td><input type="date" style="width:140px" data-subjset="examDate" data-id="${esc(s.id)}" value="${s.examDate}"></td>
+      <td class="num ${examSoon ? "tag red" : ""}">${x.days}</td>
+      <td class="num">${fmtMin(x.remain)}</td>
+      <td class="num">${Math.round(x.examWk)}</td>
+      <td class="num"><input type="number" style="width:78px;text-align:right" min="0" step="15"
+            data-subjset="routineMinPerWeek" data-id="${esc(s.id)}" value="${s.routineMinPerWeek}"></td>
+      <td class="num"><b>${Math.round(x.target)}</b></td>
+      <td>${bar(prog)}<span class="mut">${Math.round(prog*100)}%</span></td>
+    </tr>`;
+  }
+
+  h += `<tr class="total">
+      <td>合計</td><td></td><td></td>
+      <td class="num">${fmtMin(lc.demand.reduce((a,x)=>a+x.remain,0))}</td>
+      <td class="num">${Math.round(lc.demand.reduce((a,x)=>a+x.examWk,0))}</td>
+      <td class="num">${Math.round(lc.demand.reduce((a,x)=>a+x.routineWk,0))}</td>
+      <td class="num">${fmtMin(lc.need)}</td>
+      <td></td>
+    </tr></tbody></table>
+    <p class="hint">「採用/週」= max(考試模式, 恆常配額)。考試模式由剩餘分鐘 ÷ 剩餘週數反推；恆常配額係防止某科被餓死的地板。</p>
+  </div>`;
+
+  return h;
+}
+
+/* ── 設定 ── */
+function renderSettings(){
+  const s = state.settings;
+  const available = Object.keys(DSE_TOPICS).filter(id => !getSubject(id));
+
+  let h = `<div class="card"><h3>每日可用時間</h3>
+    <div class="grid2">
+      <label class="fld">起床／開始<input type="time" data-set="dayStart" value="${s.dayStart}"></label>
+      <label class="fld">睡覺／結束<input type="time" data-set="dayEnd" value="${s.dayEnd}"></label>
+      <label class="fld">每節最長（分）<input type="number" min="10" max="120" data-set="maxBlockMin" value="${s.maxBlockMin}"></label>
+      <label class="fld">每節最短（分）<input type="number" min="5" max="60" data-set="minBlockMin" value="${s.minBlockMin}"></label>
+      <label class="fld">小休（分）<input type="number" min="0" max="30" data-set="breakMin" value="${s.breakMin}"></label>
+      <label class="fld">每日溫習上限（分）<input type="number" min="30" max="720" data-set="maxStudyMinPerDay" value="${s.maxStudyMinPerDay}"></label>
+    </div>
+    <h3 style="margin-top:18px">固定佔用時段（每日通用，一行一段）</h3>
+    <textarea rows="4" data-busy placeholder="09:00-15:30">${s.busy.map(b => b.start + "-" + b.end).join("\n")}</textarea>
+    <p class="hint">例如 <code>08:00-15:30</code>（上學）、<code>16:00-18:00</code>（補習）。會從每日視窗中扣除。</p>
+  </div>`;
+
+  h += `<div class="card"><h3>加入科目</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="add-subj" style="max-width:260px">
+        ${available.length
+          ? available.map(id => `<option value="${id}">${esc(SUBJ_NAME[id] || id)}</option>`).join("")
+          : `<option value="">（全部已加入）</option>`}
+      </select>
+      <button class="btn primary" data-act="add-subject" ${available.length ? "" : "disabled"}>加入</button>
+    </div>
+    <p class="hint">加入時會按該科特性自動生成基礎細項，之後可在「課程」逐項調整。</p>
+  </div>`;
+
+  h += `<div class="card"><h3>資料</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" data-act="export">匯出 JSON</button>
+      <button class="btn" data-act="import">匯入 JSON</button>
+      <button class="btn danger" data-act="reset">重設為示範資料</button>
+    </div>
+    <p class="hint">資料自動存在瀏覽器 localStorage；換機前請匯出。</p>
+    <input type="file" id="import-file" accept="application/json" style="display:none">
+  </div>`;
+
+  h += `<div class="card"><h3>計算方式</h3>
+    <p class="hint" style="line-height:1.9">
+      <b>細項剩餘</b> = 首次分鐘 × 難度權重 × 熟悉度係數（未學 1.0 / 學過 0.6 / 複習1 0.35 / 複習2 0.2 / 熟練 0.08）<br>
+      <b>首次分鐘</b> = 類型單位分鐘 × 份量（calc 以題數計，其他以節／篇／組計）<br>
+      <b>考前 60 日</b> 自動加上操卷加壓（calc / essay +40%，其他 +15–30%）<br>
+      <b>每週需求</b> = max( 剩餘 ÷ 剩餘週數 , 恆常配額 )<br>
+      <b>超載</b> 時全部科目按 <code>可用 ÷ 需求</code> 等比縮放，並受每日上限約束<br>
+      <b>完成一次</b> 熟悉度 +1，下次複習日按 1 / 3 / 7 / 14 / 30 / 60 日間隔排入佇列
+    </p>
+  </div>`;
+
+  return h;
+}
+
+function render(){
+  const el = document.getElementById("app");
+  if (ui.tab === "today")      el.innerHTML = renderToday();
+  else if (ui.tab === "course") el.innerHTML = renderCourse();
+  else if (ui.tab === "load")   el.innerHTML = renderLoad();
+  else                          el.innerHTML = renderSettings();
+  renderTop();
+}
+
+/* ══════════════════════════════════════════════════════════
+   11. 事件
+   ══════════════════════════════════════════════════════════ */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act;
+
+  switch (act){
+    case "tab":
+      ui.tab = el.dataset.tab;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+
+    case "date-prev":  ui.date = addDays(ui.date, -1); render(); return;
+    case "date-next":  ui.date = addDays(ui.date,  1); render(); return;
+    case "date-today": ui.date = todayStr(); render(); return;
+
+    case "toggle": {
+      const id = el.dataset.id;
+      if (ui.collapsed.has(id)) ui.collapsed.delete(id); else ui.collapsed.add(id);
+      render(); return;
+    }
+
+    case "complete":
+      e.stopPropagation();
+      completeItem(el.dataset.item);
+      return;
+
+    case "undo-item":
+      e.stopPropagation();
+      undoItem(el.dataset.item);
+      return;
+
+    case "edit-item":
+      openItemModal(el.dataset.s, el.dataset.t, el.dataset.i);
+      return;
+
+    case "add-item":
+      e.stopPropagation();
+      openItemModal(el.dataset.s, el.dataset.t, null);
+      return;
+
+    case "add-topic": {
+      const s = getSubject(el.dataset.s);
+      if (!s) return;
+      const name = prompt("新 topic 名稱：");
+      if (!name || !name.trim()) return;
+      s.topics.push({ id: `${s.id}.t${Date.now().toString(36)}`, name: name.trim(), items: [] });
+      save(); render(); return;
+    }
+
+    case "del-topic": {
+      e.stopPropagation();
+      const s = getSubject(el.dataset.s);
+      if (!s) return;
+      if (!confirm("確定刪除此 topic 及其所有細項？")) return;
+      s.topics = s.topics.filter(t => t.id !== el.dataset.t);
+      save(); render(); return;
+    }
+
+    case "del-subject": {
+      e.stopPropagation();
+      const s = getSubject(el.dataset.s);
+      if (!s) return;
+      if (!confirm(`確定刪除科目「${s.name}」？`)) return;
+      state.subjects = state.subjects.filter(x => x.id !== s.id);
+      save(); render(); return;
+    }
+
+    case "add-subject": {
+      const sel = document.getElementById("add-subj");
+      const id = sel && sel.value;
+      if (!id || getSubject(id)) return;
+      state.subjects.push(makeSubject(id));
+      save(); render(); return;
+    }
+
+    case "jump": {
+      ui.tab = "course";
+      ui.collapsed.delete(el.dataset.subj);
+      ui.collapsed.delete(el.dataset.topic);
+      render();
+      return;
+    }
+
+    case "export": {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `dse-planner-${todayStr()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+      return;
+    }
+
+    case "import":
+      document.getElementById("import-file").click();
+      return;
+
+    case "reset":
+      if (!confirm("重設為示範資料？所有進度會消失。")) return;
+      state = defaultState();
+      ui.collapsed.clear();
+      save(); render(); return;
+  }
+});
+
+/* ── 設定 / 科目欄位變更 ── */
+document.addEventListener("change", e => {
+  const t = e.target;
+
+  if (t.dataset.set){
+    const k = t.dataset.set;
+    const v = (t.type === "number") ? Number(t.value) : t.value;
+    if (t.type === "number" && (!Number.isFinite(v) || v < 0)) return;
+    state.settings[k] = v;
+    save(); render(); return;
+  }
+
+  if (t.dataset.subjset){
+    const s = getSubject(t.dataset.id);
+    if (!s) return;
+    const k = t.dataset.subjset;
+    s[k] = (t.type === "number") ? Math.max(0, Number(t.value) || 0) : t.value;
+    save(); render(); return;
+  }
+
+  if (t.dataset.busy !== undefined){
+    const lines = t.value.split("\n").map(x => x.trim()).filter(Boolean);
+    const busy = [];
+    for (const ln of lines){
+      const m = /^(\d{1,2}:\d{2})\s*[-–~]\s*(\d{1,2}:\d{2})$/.exec(ln);
+      if (m) busy.push({ start:m[1], end:m[2] });
+    }
+    state.settings.busy = busy;
+    save(); render(); return;
+  }
+
+  if (t.id === "import-file"){
+    const f = t.files && t.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const obj = JSON.parse(String(reader.result));
+        if (!obj || !Array.isArray(obj.subjects)) throw new Error("格式錯誤");
+        obj.done = obj.done || {};
+        state = obj;
+        save(); render();
+        alert("匯入成功。");
+      } catch(err){ alert("匯入失敗：" + err.message); }
+    };
+    reader.readAsText(f);
+    t.value = "";
+    return;
+  }
+});
+
+/* ══════════════════════════════════════════════════════════
+   12. 細項編輯 modal
+   ══════════════════════════════════════════════════════════ */
+function openItemModal(sid, tid, iid){
+  const s = getSubject(sid);
+  if (!s) return;
+  const tp = s.topics.find(t => t.id === tid);
+  if (!tp) return;
+  const it = iid ? tp.items.find(i => i.id === iid) : null;
+
+  const back = document.createElement("div");
+  back.className = "modal-back";
+  back.innerHTML = `<div class="modal">
+    <h3>${it ? "編輯細項" : "新增細項"} · ${esc(tp.name)}</h3>
+    <label>名稱
+      <input type="text" id="m-name" value="${it ? esc(it.name) : ""}" placeholder="例如：配方法、判別式">
+    </label>
+    <label>類型
+      <select id="m-kind">
+        ${Object.keys(UNIT_MIN).map(k =>
+          `<option value="${k}" ${it && it.kind === k ? "selected" : ""}>${KIND_LABEL[k]}（${UNIT_MIN[k]} 分／單位）</option>`
+        ).join("")}
+      </select>
+    </label>
+    <label>份量（節 / 組 / 題 / 篇）
+      <input type="number" id="m-amount" min="1" step="1" value="${it ? (it.amount ?? 1) : 1}">
+    </label>
+    <label>難度
+      <select id="m-diff">
+        ${[1,2,3].map(x => `<option value="${x}" ${it && it.difficulty === x ? "selected" : ""}>${DIFF_LB[x]}</option>`).join("")}
+      </select>
+    </label>
+    <label>熟悉度
+      <select id="m-fam">
+        ${FAM.map((f,i) => `<option value="${i}" ${it && (it.familiarity ?? 0) === i ? "selected" : ""}>${f}</option>`).join("")}
+      </select>
+    </label>
+    <div class="mbtns">
+      ${it ? `<button class="btn danger" data-m="del">刪除</button>` : ""}
+      <button class="btn" data-m="cancel">取消</button>
+      <button class="btn primary" data-m="save">儲存</button>
+    </div>
+  </div>`;
+  document.body.appendChild(back);
+
+  const close = () => back.remove();
+
+  back.addEventListener("click", e => {
+    if (e.target === back) return close();
+    const b = e.target.closest("[data-m]");
+    if (!b) return;
+    const m = b.dataset.m;
+
+    if (m === "cancel") return close();
+
+    if (m === "del"){
+      if (!confirm("確定刪除此細項？")) return;
+      tp.items = tp.items.filter(x => x.id !== iid);
+      close(); save(); render(); return;
+    }
+
+    if (m === "save"){
+      const name  = back.querySelector("#m-name").value.trim() || "未命名";
+      const kind  = back.querySelector("#m-kind").value;
+      const amount = Math.max(1, Number(back.querySelector("#m-amount").value) || 1);
+      const difficulty = Number(back.querySelector("#m-diff").value);
+      const familiarity = Number(back.querySelector("#m-fam").value);
+
+      if (it){
+        Object.assign(it, { name, kind, amount, difficulty, familiarity });
+        if (familiarity < 4 && it.nextReviewAt && it.nextReviewAt <= ui.date && familiarity === 4) it.nextReviewAt = null;
+      } else {
+        tp.items.push({
+          id: `${tp.id}.i${Date.now().toString(36)}`,
+          name, kind, amount, difficulty, familiarity, nextReviewAt: null
+        });
+      }
+      close(); save(); render();
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   13. 啟動
+   ══════════════════════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
