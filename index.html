@@ -196,10 +196,14 @@ input[type=number]{width:auto}
 
 <script>
 /* =======================================================================
-   0. 工具
+   0. 工具（Bug 3 修正：toMin 加空值防護）
    ======================================================================= */
 const pad = n => String(n).padStart(2,'0');
-const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+const toMin = s => {
+  if(!s || typeof s !== 'string') return 0;
+  const [h,m] = s.split(':').map(Number);
+  return (h || 0) * 60 + (m || 0);
+};
 const fromMin = m => `${pad(Math.floor(m/60)%24)}:${pad(Math.round(m%60))}`;
 const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parseKey = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
@@ -725,7 +729,7 @@ function subjectDemand(subj, dateStr){
   };
 }
 
-/** 計算某日完整日程 */
+/** 計算某日完整日程（Bug 5 修正：週末加入晚餐顯示） */
 function computeDayPlan(dateStr){
   const s = state.settings;
   const d = parseKey(dateStr);
@@ -736,6 +740,10 @@ function computeDayPlan(dateStr){
   if(weekend){
     winStart = toMin(s.weekendStart);
     winEnd = Math.max(winStart, toMin(s.latestEnd) - s.dinner);
+    // Bug 5：補上晚餐固定作息，與平日顯示一致
+    if(winEnd < toMin(s.latestEnd)){
+      items.push({ type:'fixed', name:'晚餐', start:winEnd, end:winEnd + s.dinner });
+    }
   }else{
     const ss = toMin(s.schoolStart), se = toMin(s.schoolEnd);
     items.push({ type:'fixed', name:'學校', start:ss, end:se });
@@ -847,16 +855,17 @@ function timelineHtml(dateStr){
   }).join('') + '</div>';
 }
 
+/* Bug 1 修正：改用 data- 屬性，避免 ID 衝突 */
 function specialFormHtml(dateStr){
   const list = state.specials.filter(x => x.date === dateStr);
   return `
     <div class="special-form">
       <div class="field" style="margin:0"><label>事件名稱</label>
-        <input id="spName" placeholder="例：家庭聚會"></div>
+        <input data-sp-name placeholder="例：家庭聚會"></div>
       <div class="field" style="margin:0"><label>開始</label>
-        <input type="time" id="spStart" value="18:00"></div>
+        <input type="time" data-sp-start value="18:00"></div>
       <div class="field" style="margin:0"><label>結束</label>
-        <input type="time" id="spEnd" value="21:00"></div>
+        <input type="time" data-sp-end value="21:00"></div>
       <button class="btn primary" data-act="add-special" data-date="${dateStr}">加入</button>
     </div>
     ${list.length ? `<div class="special-list">${list.map(sp => `
@@ -972,11 +981,14 @@ function renderToday(){
   const d = parseKey(tk);
   const plan = computeDayPlan(tk);
 
-  let specialTotal = 0;
+  /* Bug 4 修正：用 Set 逐分鐘去重，重疊的特別安排不再重複扣除 */
+  const specialMins = new Set();
   plan.items.filter(i => i.type === 'special').forEach(i => {
     const s = Math.max(i.start, plan.winStart), e = Math.min(i.end, plan.winEnd);
-    if(e > s) specialTotal += e - s;
+    for(let t = s; t < e; t++) specialMins.add(t);
   });
+  const specialTotal = specialMins.size;
+
   const avail = Math.max(0, (plan.winEnd - plan.winStart) - specialTotal);
   const studied = plan.items.filter(i => i.type === 'study')
     .reduce((a,b) => a + (b.end - b.start), 0);
@@ -1033,8 +1045,12 @@ function renderQuiz(){
   const el = document.getElementById('panel-quiz');
   const f = ui.form;
 
+  /* Bug 2 修正：重置 subjectId 時同步清空 items */
   if(!f.subjectId && state.subjects.length) f.subjectId = state.subjects[0].id;
-  if(f.subjectId && !getSubject(f.subjectId)) f.subjectId = state.subjects.length ? state.subjects[0].id : '';
+  if(f.subjectId && !getSubject(f.subjectId)){
+    f.subjectId = state.subjects.length ? state.subjects[0].id : '';
+    f.items = [];
+  }
 
   if(!state.subjects.length){
     el.innerHTML = `<div class="card"><h2>新增測驗</h2>
@@ -1482,12 +1498,14 @@ document.addEventListener('click', e => {
     renderCalendar(); return;
   }
 
-  /* ---- 特別安排 ---- */
+  /* ---- 特別安排（Bug 1 修正：用 closest 定位所屬表單） ---- */
   if(act === 'add-special'){
     const date = el.dataset.date;
-    const name = document.getElementById('spName').value.trim();
-    const start = document.getElementById('spStart').value;
-    const end = document.getElementById('spEnd').value;
+    const form = el.closest('.special-form');
+    if(!form) return;
+    const name  = form.querySelector('[data-sp-name]').value.trim();
+    const start = form.querySelector('[data-sp-start]').value;
+    const end   = form.querySelector('[data-sp-end]').value;
     if(!name) return toast('請輸入事件名稱');
     if(start && end && toMin(end) <= toMin(start)) return toast('結束時間要遲過開始時間');
     state.specials.push({ id: nid(), date, name, start, end });
