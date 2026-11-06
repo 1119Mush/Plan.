@@ -1,1073 +1,1141 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DSE 溫習規劃器 · 三層課程樹</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudyPlanner — 測驗 × DSE 排程</title>
 <style>
-:root{
-  --bg:#f4f6fa; --card:#fff; --line:#e4e9f2; --txt:#1b2433; --mut:#6b7890;
-  --acc:#2f6fed; --acc2:#eaf1ff; --red:#e5484d; --red2:#fdecec;
-  --amb:#d97706; --amb2:#fff7e8; --grn:#16a34a; --grn2:#eaf7ee;
-  --sh:0 1px 2px rgba(20,30,60,.05), 0 4px 14px rgba(20,30,60,.05);
-}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
-  background:var(--bg); color:var(--txt); font-size:14px; line-height:1.55;
-  -webkit-font-smoothing:antialiased;
-}
-header{
-  position:sticky; top:0; z-index:20; background:rgba(255,255,255,.86);
-  backdrop-filter:saturate(180%) blur(12px); border-bottom:1px solid var(--line);
-}
-.hd{max-width:1080px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-h1{font-size:16px;margin:0;letter-spacing:.3px}
-h1 span{color:var(--acc)}
-#stats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;font-size:12px}
-.pill{background:var(--acc2);color:var(--acc);border-radius:999px;padding:3px 10px;font-weight:600}
-.pill.warn{background:var(--red2);color:var(--red)}
-.pill.ok{background:var(--grn2);color:var(--grn)}
-nav{max-width:1080px;margin:0 auto;padding:8px 16px 0;display:flex;gap:4px}
-nav button{
-  border:0;background:transparent;padding:9px 14px;border-radius:10px 10px 0 0;
-  font:inherit;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;
-}
-nav button.on{color:var(--acc);border-bottom-color:var(--acc);background:#fff}
-main{max-width:1080px;margin:0 auto;padding:16px;padding-bottom:80px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
-.card h3{margin:2px 0 12px;font-size:13px;color:var(--mut);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-button{font:inherit;cursor:pointer}
-.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 12px;font-weight:600;color:var(--txt)}
-.btn:hover{border-color:#c9d4e6;background:#fafbfe}
-.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
-.btn.primary:hover{background:#255dd0}
-.btn.danger{background:#fff;border-color:#f3c9cb;color:var(--red)}
-.btn.danger:hover{background:var(--red2)}
-.btn.sm{padding:3px 9px;font-size:12px;border-radius:7px}
-.bar{flex:1;min-width:60px;height:7px;background:#eef1f7;border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,#5b8cf5,#2f6fed);border-radius:99px;transition:width .3s}
-.mut{color:var(--mut);font-size:12px}
-.tag{font-size:11px;padding:2px 8px;border-radius:99px;background:#f0f3f9;color:var(--mut);font-weight:600;white-space:nowrap}
-.tag.red{background:var(--red2);color:var(--red)}
-.tag.amb{background:var(--amb2);color:var(--amb)}
+  :root{
+    --bg:#f1f5f9; --card:#fff; --border:#e2e8f0; --text:#0f172a;
+    --muted:#64748b; --primary:#6366f1; --primary-dark:#4f46e5;
+    --danger:#ef4444; --warn:#f59e0b; --ok:#10b981;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{max-width:920px;margin:0 auto;padding:16px 14px 80px;}
 
-/* ── banner ── */
-.banner{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;border:1px solid}
-.banner.red{background:var(--red2);border-color:#f6cdcf;color:#a02026}
-.banner.amb{background:var(--amb2);border-color:#f3e0bd;color:#8a5a05}
-.banner b{font-weight:700}
+  /* ---------- header ---------- */
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 0 10px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.3px;}
+  .brand .logo{
+    width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    display:grid;place-items:center;color:#fff;font-size:16px;
+  }
+  .today-label{font-size:13px;color:var(--muted);font-weight:500;}
 
-/* ── today ── */
-.datebar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.datebar .d{font-size:17px;font-weight:700;letter-spacing:.4px}
-.datebar .btn{margin-left:0}
-.summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:110px;flex:1;box-shadow:var(--sh)}
-.stat .k{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.4px}
-.stat .v{font-size:19px;font-weight:800;margin-top:2px}
-.stat .v small{font-size:12px;font-weight:600;color:var(--mut)}
+  /* ---------- tabs ---------- */
+  nav.tabs{
+    display:flex;gap:6px;background:#e2e8f0;padding:5px;border-radius:14px;margin-bottom:16px;
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    flex:1;min-width:80px;border:0;background:transparent;padding:9px 12px;border-radius:10px;
+    font-size:14px;font-weight:600;color:#475569;cursor:pointer;transition:.15s;white-space:nowrap;
+    font-family:inherit;
+  }
+  nav.tabs button:hover{color:var(--text);}
+  nav.tabs button.active{background:#fff;color:var(--primary-dark);box-shadow:0 1px 3px rgba(0,0,0,.08);}
 
-.row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;border:1px solid transparent}
-.row:hover{background:#fafbfe;border-color:var(--line)}
-.row.item{cursor:pointer}
-.row.item .nm{font-weight:600;flex:0 0 auto;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row.item .sub{color:var(--mut);font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row.item .min{margin-left:auto;font-variant-numeric:tabular-nums;font-size:12px;color:var(--mut);font-weight:600;white-space:nowrap}
-.row.done{opacity:.55}
-.row.done .nm{text-decoration:line-through}
-.chk{
-  width:22px;height:22px;flex:0 0 22px;border-radius:7px;border:1.6px solid #c9d4e6;background:#fff;
-  display:grid;place-items:center;font-size:13px;color:transparent;padding:0;line-height:1;
-}
-.chk:hover{border-color:var(--acc)}
-.chk.on{background:var(--grn);border-color:var(--grn);color:#fff}
-.time{font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;color:var(--acc);background:var(--acc2);padding:2px 8px;border-radius:7px;white-space:nowrap}
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+  .card h2{
+    font-size:15px;margin:0 0 14px;font-weight:700;letter-spacing:-.2px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card h2 .badge{
+    font-size:11px;font-weight:700;background:#eef2ff;color:var(--primary-dark);
+    padding:2px 8px;border-radius:20px;
+  }
 
-/* ── course tree ── */
-.subjhead{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
-.subjhead:hover{background:#fafbfe;border-color:var(--line)}
-.subjhead .nm{font-weight:800;font-size:15px}
-.caret{width:14px;color:var(--mut);font-size:10px;flex:0 0 14px}
-.topics{margin:2px 0 10px 14px;border-left:2px solid #eef1f7;padding-left:10px}
-.topichead{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent}
-.topichead:hover{background:#fafbfe;border-color:var(--line)}
-.topichead .nm{font-weight:700;font-size:13.5px}
-.items{margin:2px 0 6px 14px;border-left:2px dashed #eef1f7;padding-left:10px}
-.fam{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
-.fam0{background:#f0f2f7;color:#8494ad}
-.fam1{background:#e8f0ff;color:#2f6fed}
-.fam2{background:#e6f6ef;color:#12865a}
-.fam3{background:#e9f7e5;color:#3f8f1f}
-.fam4{background:#dcf5e2;color:#0f7a37}
-.addline{padding:4px 10px}
+  /* ---------- stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;}
+  .stat{
+    background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px;
+  }
+  .stat .v{font-size:20px;font-weight:800;letter-spacing:-.5px;}
+  .stat .k{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
 
-/* ── tables ── */
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
-th{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-tr.total td{font-weight:800;border-bottom:0;background:#fafbfe}
-input[type=date],input[type=number],input[type=text],input[type=time],select,textarea{
-  font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--txt);width:100%;
-}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--acc2);border-color:var(--acc)}
-textarea{resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-label.fld{display:block;font-size:12px;color:var(--mut);font-weight:600}
-label.fld input,label.fld select,label.fld textarea{margin-top:4px}
-.hint{font-size:12px;color:var(--mut);margin:8px 0 0}
+  /* ---------- banner ---------- */
+  .banner{
+    border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:16px;
+    display:flex;gap:10px;align-items:flex-start;line-height:1.5;
+  }
+  .banner.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+  .banner.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;}
+  .banner b{font-weight:700;}
 
-/* ── modal ── */
-.modal-back{position:fixed;inset:0;background:rgba(18,26,44,.42);display:grid;place-items:center;z-index:100;padding:16px}
-.modal{background:#fff;border-radius:16px;padding:18px 20px;width:min(420px,100%);box-shadow:0 20px 60px rgba(10,20,50,.28)}
-.modal h3{margin:0 0 14px;font-size:15px;color:var(--txt);text-transform:none;letter-spacing:0}
-.modal label{display:block;font-size:12px;color:var(--mut);font-weight:600;margin-bottom:10px}
-.modal label input,.modal label select{margin-top:4px}
-.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-.mbtns .danger{margin-right:auto}
-.empty{color:var(--mut);text-align:center;padding:26px 10px;font-size:13px}
-code{background:#eef1f7;padding:1px 5px;border-radius:5px;font-size:12px}
+  /* ---------- timeline ---------- */
+  .tl-row{
+    display:grid;grid-template-columns:64px 10px 1fr auto;align-items:center;gap:10px;
+    padding:9px 4px;border-bottom:1px solid #f1f5f9;
+  }
+  .tl-row:last-child{border-bottom:0;}
+  .tl-time{font-size:12px;font-variant-numeric:tabular-nums;color:#475569;font-weight:600;line-height:1.25;}
+  .tl-time span{display:block;font-weight:400;color:#94a3b8;font-size:11px;}
+  .tl-dot{width:10px;height:10px;border-radius:50%;}
+  .tl-body{min-width:0;}
+  .tl-title{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tl-sub{font-size:11.5px;color:var(--muted);}
+  .tl-dur{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .tl-row.study .tl-title{color:var(--primary-dark);}
+  .tl-row.buffer .tl-title,.tl-row.school .tl-title{color:#64748b;font-weight:500;}
+
+  /* ---------- forms ---------- */
+  label.fld{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;}
+  input[type=text],input[type=date],input[type=number],input[type=time],select{
+    width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:10px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--text);
+    transition:.15s;
+  }
+  input:focus,select:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.12);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+
+  button.primary{
+    background:var(--primary);color:#fff;border:0;padding:11px 20px;border-radius:11px;
+    font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;
+  }
+  button.primary:hover{background:var(--primary-dark);}
+  button.primary:disabled{background:#cbd5e1;cursor:not-allowed;}
+  button.ghost{
+    background:#fff;border:1px solid var(--border);color:#475569;padding:9px 16px;
+    border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  button.ghost:hover{background:#f8fafc;}
+  button.danger-sm{
+    background:transparent;border:0;color:#94a3b8;cursor:pointer;font-size:16px;
+    padding:4px 8px;border-radius:8px;font-family:inherit;
+  }
+  button.danger-sm:hover{background:#fef2f2;color:var(--danger);}
+
+  .segmented{display:flex;gap:6px;}
+  .segmented button{
+    flex:1;padding:9px;border:1px solid var(--border);background:#fff;border-radius:10px;
+    font-size:13px;font-weight:600;cursor:pointer;color:#475569;font-family:inherit;transition:.15s;
+  }
+  .segmented button.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+  /* ---------- quiz topic tree ---------- */
+  .topic-block{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+  .topic-label{
+    display:flex;align-items:center;gap:9px;padding:10px 12px;background:#f8fafc;
+    cursor:pointer;font-size:13.5px;font-weight:600;
+  }
+  .topic-label input{margin:0;width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+  .item-list{padding:4px 0;}
+  .item-check{
+    display:flex;align-items:center;gap:9px;padding:7px 12px 7px 34px;font-size:13px;
+    cursor:pointer;transition:.12s;
+  }
+  .item-check:hover{background:#f8fafc;}
+  .item-check input{margin:0;width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
+  .item-check .muted{margin-left:auto;font-size:11.5px;color:#94a3b8;font-variant-numeric:tabular-nums;}
+
+  /* ---------- preview ---------- */
+  .preview{
+    background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:12px 14px;
+    font-size:13px;color:#3730a3;line-height:1.7;margin-top:4px;
+  }
+  .preview .big{font-size:16px;font-weight:800;}
+
+  /* ---------- quiz list ---------- */
+  .quiz-item{
+    display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid #f1f5f9;
+  }
+  .quiz-item:last-child{border-bottom:0;}
+  .quiz-item .dot{width:10px;height:10px;border-radius:50%;flex:none;}
+  .quiz-item .meta{flex:1;min-width:0;}
+  .quiz-item .t{font-size:14px;font-weight:600;}
+  .quiz-item .s{font-size:12px;color:var(--muted);}
+  .pill{
+    font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;
+  }
+  .pill.urgent{background:#fef2f2;color:#b91c1c;}
+  .pill.soon{background:#fffbeb;color:#b45309;}
+  .pill.later{background:#f0fdf4;color:#15803d;}
+  .pill.done{background:#f1f5f9;color:#64748b;}
+
+  /* ---------- subject editor ---------- */
+  .subj-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .subj-head .dot{width:12px;height:12px;border-radius:50%;}
+  .subj-head .nm{font-weight:700;font-size:15px;}
+  .subj-head .ex{margin-left:auto;font-size:12px;color:var(--muted);}
+  .topic-group{margin:10px 0 4px;}
+  .topic-group .th{font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+  .item-row{
+    display:grid;grid-template-columns:1fr 90px 1fr 72px;gap:10px;align-items:center;
+    padding:6px 0;font-size:13px;
+  }
+  .item-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .item-row input[type=number]{padding:5px 8px;font-size:12.5px;}
+  .item-row .rem{font-size:11.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;}
+  .item-row input[type=range]{width:100%;accent-color:var(--primary);}
+  @media(max-width:640px){
+    .item-row{grid-template-columns:1fr 1fr;gap:6px;}
+    .item-row .nm{grid-column:1/-1;}
+    .item-row .rem{grid-column:2;text-align:right;}
+  }
+
+  .muted{color:var(--muted);}
+  .small{font-size:12px;}
+  .mt12{margin-top:12px;}
+  .rowflex{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .empty{text-align:center;padding:26px;color:#94a3b8;font-size:13.5px;}
 </style>
 </head>
 <body>
+<div class="app">
 
-<header>
-  <div class="hd">
-    <h1>DSE 溫習規劃器 <span>· 三層課程樹</span></h1>
-    <div id="stats"></div>
-  </div>
-  <nav id="tabs">
-    <button data-act="tab" data-tab="today">今日</button>
-    <button data-act="tab" data-tab="course">課程</button>
-    <button data-act="tab" data-tab="load">負荷</button>
-    <button data-act="tab" data-tab="settings">設定</button>
+  <header class="top">
+    <div class="brand">
+      <div class="logo">▦</div>
+      <div>
+        <div>StudyPlanner</div>
+        <div class="today-label" id="todayLabel"></div>
+      </div>
+    </div>
+    <div class="rowflex">
+      <span class="pill soon" id="examCountdown">—</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="today" class="active">今日計劃</button>
+    <button data-tab="quizzes">測驗</button>
+    <button data-tab="subjects">課程樹</button>
+    <button data-tab="settings">設定</button>
   </nav>
-</header>
 
-<main id="app"></main>
+  <main id="view"></main>
+</div>
+
 <script>
-/* ══════════════════════════════════════════════════════════
-   0. 常數
-   ══════════════════════════════════════════════════════════ */
-const FAM = ["未學","學過","複習1","複習2","熟練"];
-const UNIT_MIN = { concept:25, memorize:12, calc:2.5, essay:45, practical:30, source:20 };
-const KIND_LABEL = {
-  concept:"理解概念", memorize:"背誦", calc:"計算操練",
-  essay:"長答／寫作", practical:"技能／實驗", source:"史料／數據"
-};
-const DIFF_W  = {1:0.8, 2:1.0, 3:1.3};
-const DIFF_LB = {1:"易", 2:"中", 3:"難"};
-const FAM_MULT = [1.00, 0.60, 0.35, 0.20, 0.08];
-const PASTPAPER_ADD = { concept:0.15, calc:0.40, essay:0.40, memorize:0.20, practical:0.30, source:0.25 };
-const REVIEW_GAPS = [1, 3, 7, 14, 30, 60];
-const DAY = 86400000;
+/* =========================================================
+   工具函數
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const pad2 = n => String(n).padStart(2, '0');
 
-/* ══════════════════════════════════════════════════════════
-   1. 種子資料
-   ══════════════════════════════════════════════════════════ */
-const DSE_TOPICS = {
-  chinese: ["卷一 文言範文（12篇）","卷一 白話文閱讀","卷一 文言字詞句法",
-            "卷二 記敘描寫文","卷二 議論說明文","卷二 實用文",
-            "卷三 聆聽綜合","卷四 小組討論","校本評核"],
-  english: ["Paper 1 Part A","Paper 1 Part B1/B2","Paper 2 Short Task",
-            "Paper 2 Long Task","Paper 3 Part A","Paper 3 Part B",
-            "Paper 4 Group Interaction","Paper 4 Individual Response","SBA"],
-  math:    ["二次方程與函數","指數與對數","數列","不等式與線性規劃",
-            "三角學","圓形性質","坐標幾何","立體圖形","概率","統計",
-            "函數圖像變換","多項式"],
-  physics: ["力學（運動學）","力學（力與動量）","熱學","波動","光學",
-            "電與磁","電路","原子物理","放射現象"],
-  chemistry:["原子結構與週期表","化學鍵","酸鹼與鹽","氧化還原","化學平衡",
-            "反應速率","能量學","有機化學","分析化學","工業化學"],
-  biology: ["細胞與代謝","遺傳與分子生物","生態系統","人體生理（神經／內分泌）",
-            "人體生理（循環／呼吸）","植物生理","生物工程","演化"],
-  econ:    ["微觀：需求供應","微觀：彈性與市場","微觀：廠商理論",
-            "宏觀：國民收入","宏觀：貨幣與銀行","宏觀：財政政策","國際貿易"],
-  geography:["自然地理：地貌","自然地理：氣候","自然地理：生態",
-             "人文地理：人口","人文地理：城市","人文地理：農業工業","區域研究"],
-  history: ["中國史：上古至清","中國史：近代","中國史：現代",
-            "世界史：一戰前","世界史：兩戰","世界史：冷戰"],
-  bafs:    ["會計：簿記","會計：財務報表","會計：成本會計",
-            "商業管理：管理功能","商業管理：營銷","商業管理：財務管理"],
-  ict:     ["電腦系統","程式編寫","數據結構","網絡與互聯網","數據庫","資訊系統","社會議題"],
-  csd:     ["主題一：一國兩制","主題二：公民權利","主題三：可持續發展"]
-};
-
-const SUBJ_NAME = {
-  chinese:"中文", english:"英文", math:"數學（必修部分）", physics:"物理",
-  chemistry:"化學", biology:"生物", econ:"經濟", geography:"地理",
-  history:"歷史", bafs:"BAFS", ict:"ICT", csd:"公民與社會發展"
-};
-const SUBJ_ROUTINE = {
-  chinese:210, english:240, math:210, physics:180, chemistry:180, biology:210,
-  econ:150, geography:150, history:180, bafs:150, ict:150, csd:120
-};
-// 預設考試日（若已過去會自動順延一年）
-const SUBJ_EXAM = {
-  chinese:"2027-04-09", english:"2027-04-10", math:"2027-04-12", physics:"2027-04-19",
-  chemistry:"2027-04-21", biology:"2027-04-23", econ:"2027-04-27", geography:"2027-04-28",
-  history:"2027-04-30", bafs:"2027-05-03", ict:"2027-05-04", csd:"2027-04-16"
-};
-// 每個科目的預設細項模板：[名稱, kind, amount, difficulty]
-const GEN = {
-  chinese: [["範文／課文理解","concept",1,2],["字詞與語基","memorize",10,2],["寫作練習","essay",1,3]],
-  english: [["語法與詞彙","memorize",15,2],["閱讀理解","concept",1,2],["寫作練習","essay",1,3]],
-  math:    [["概念理解","concept",1,2],["運算操練","calc",15,2],["進階應用","calc",10,3]],
-  physics: [["概念理解","concept",1,2],["計算操練","calc",12,3],["實驗與圖表","practical",1,2]],
-  chemistry:[["概念理解","concept",1,2],["計算操練","calc",12,3],["實驗與圖表","practical",1,2]],
-  biology: [["概念理解","concept",1,2],["圖表與流程","practical",1,2],["長答練習","essay",1,3]],
-  econ:    [["概念理解","concept",1,2],["圖表分析","practical",1,2],["題目操練","calc",12,3]],
-  geography:[["概念理解","concept",1,2],["地圖／數據","practical",1,2],["個案分析","source",1,3]],
-  history: [["史實梳理","concept",1,2],["史料分析","source",1,3],["論述練習","essay",1,3]],
-  bafs:    [["概念理解","concept",1,2],["計算操練","calc",12,3],["個案分析","source",1,2]],
-  ict:     [["概念理解","concept",1,2],["編程／操作","practical",1,2],["題目操練","calc",10,3]],
-  csd:     [["概念理解","concept",1,2],["資料分析","source",1,2],["議題探究","essay",1,3]],
-  default: [["概念理解","concept",1,2],["題目操練","calc",10,2]]
-};
-
-/* ══════════════════════════════════════════════════════════
-   2. 工具函數
-   ══════════════════════════════════════════════════════════ */
-const pad = n => String(n).padStart(2,"0");
-function todayStr(){
-  const d = new Date();
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+function fmtDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function todayStr(){ return fmtDate(new Date()); }
+function addDays(dateStr, n){
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return fmtDate(d);
 }
-function parseDate(ds){ const [y,m,d] = ds.split("-").map(Number); return Date.UTC(y, m-1, d); }
-function daysBetween(a,b){ return Math.round((parseDate(b) - parseDate(a)) / DAY); }
-function addDays(ds,n){ const t = parseDate(ds) + n*DAY; const d = new Date(t);
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`; }
-function toTime(min){ return `${pad(Math.floor(min/60))}:${pad(Math.round(min%60))}`; }
-function parseTime(s){ const m = /^(\d{1,2}):(\d{2})$/.exec(String(s).trim()); return m ? (+m[1])*60 + (+m[2]) : NaN; }
-function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function fmtMin(m){
-  m = Math.round(m);
-  if (m >= 60) { const h = (m/60); return (Math.abs(h - Math.round(h)) < 0.05 ? String(Math.round(h)) : h.toFixed(1)) + " h"; }
-  return m + " min";
+function daysBetween(a, b){
+  const da = new Date(a + 'T00:00:00');
+  const db = new Date(b + 'T00:00:00');
+  return Math.round((db - da) / 86400000);
 }
-function rollForward(ds){
-  let d = ds;
-  let guard = 0;
-  while (daysBetween(todayStr(), d) < 20 && guard++ < 30) {
-    const [y,m,dd] = d.split("-").map(Number);
-    d = `${y+1}-${pad(m)}-${pad(dd)}`;
-  }
-  return d;
+function weekdayOf(dateStr){ return new Date(dateStr + 'T00:00:00').getDay(); }
+const toMin  = s => { const [h,m] = s.split(':').map(Number); return h*60 + m; };
+const toTime = m => `${pad2(Math.floor(m/60))}:${pad2(m%60)}`;
+function fmtDur(min){
+  min = Math.round(min);
+  if (min < 60) return `${min} 分`;
+  const h = Math.floor(min/60), m = min%60;
+  return m ? `${h} 小時 ${m} 分` : `${h} 小時`;
 }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+const WD = ['日','一','二','三','四','五','六'];
 
-/* ══════════════════════════════════════════════════════════
-   3. 狀態 / 儲存
-   ══════════════════════════════════════════════════════════ */
-const STORE_KEY = "dse_planner_v3";
-
-function makeSubject(sid, over){
-  over = over || {};
-  const names = DSE_TOPICS[sid] || [];
-  const gen = GEN[sid] || GEN.default;
-  return {
-    id: sid,
-    name: over.name || SUBJ_NAME[sid] || sid,
-    examDate: over.examDate || rollForward(SUBJ_EXAM[sid] || addDays(todayStr(), 150)),
-    routineMinPerWeek: over.routineMinPerWeek ?? (SUBJ_ROUTINE[sid] ?? 180),
-    topics: names.map((tn, ti) => ({
-      id: `${sid}.t${ti}`,
-      name: tn,
-      items: gen.map(([nm, kind, amount, diff], j) => ({
-        id: `${sid}.t${ti}.i${j}`,
-        name: nm, kind, amount, difficulty: diff,
-        familiarity: 0, nextReviewAt: null
-      }))
-    }))
-  };
-}
+/* =========================================================
+   狀態
+   ========================================================= */
+const STORAGE_KEY = 'studyplanner.v2';
 
 function defaultState(){
+  const t = todayStr();
   return {
     settings: {
-      dayStart: "07:00",
-      dayEnd: "23:00",
-      breakMin: 5,
-      maxBlockMin: 50,
-      minBlockMin: 15,
-      maxStudyMinPerDay: 240,
-      busy: [{ start:"08:00", end:"15:30" }]
+      schoolStart: '07:00',
+      schoolEnd:   '17:00',
+      commuteHome: 45,
+      windDown:    30,
+      dinner:      45,
+      bedtime:     '23:00',
+      weekendStart:'09:00',
+      blockMin:    30,
+      breakMin:    10
     },
-    subjects: ["chinese","english","math","physics"].map(id => makeSubject(id)),
-    done: {}
+    subjects: [
+      {
+        id:'physics', name:'Physics', color:'#6366f1', examDate: addDays(t, 180),
+        topics:[
+          { id:'phy.mech', name:'Mechanics', items:[
+            { id:'phy.mech.1', name:'Force and Motion',      estMin:150, familiarity:0.40 },
+            { id:'phy.mech.2', name:'Momentum & Collisions', estMin:120, familiarity:0.10 },
+            { id:'phy.mech.3', name:'Circular Motion',       estMin: 90, familiarity:0.00 }
+          ]},
+          { id:'phy.wave', name:'Waves', items:[
+            { id:'phy.wave.1', name:'Wave Properties',       estMin:100, familiarity:0.60 },
+            { id:'phy.wave.2', name:'Sound & Light',         estMin:110, familiarity:0.30 }
+          ]},
+          { id:'phy.elec', name:'Electricity', items:[
+            { id:'phy.elec.1', name:'Circuits',              estMin:130, familiarity:0.20 },
+            { id:'phy.elec.2', name:'Electromagnetism',      estMin:140, familiarity:0.00 }
+          ]}
+        ]
+      },
+      {
+        id:'math', name:'Mathematics', color:'#f59e0b', examDate: addDays(t, 175),
+        topics:[
+          { id:'math.quad', name:'Quadratic Equations', items:[
+            { id:'math.quad.1', name:'Completing the Square', estMin: 80, familiarity:0.50 },
+            { id:'math.quad.2', name:'Discriminant & Roots',  estMin: 70, familiarity:0.40 }
+          ]},
+          { id:'math.trig', name:'Trigonometry', items:[
+            { id:'math.trig.1', name:'Identities',            estMin:120, familiarity:0.20 },
+            { id:'math.trig.2', name:'Graphs of Trig Funcs',  estMin:100, familiarity:0.10 }
+          ]},
+          { id:'math.stat', name:'Statistics', items:[
+            { id:'math.stat.1', name:'Probability',           estMin: 90, familiarity:0.50 },
+            { id:'math.stat.2', name:'Normal Distribution',   estMin:100, familiarity:0.30 }
+          ]}
+        ]
+      },
+      {
+        id:'english', name:'English', color:'#10b981', examDate: addDays(t, 170),
+        topics:[
+          { id:'eng.read', name:'Reading', items:[
+            { id:'eng.read.1', name:'Paper 1 Practice',       estMin:150, familiarity:0.50 },
+            { id:'eng.read.2', name:'Vocabulary Building',    estMin: 90, familiarity:0.60 }
+          ]},
+          { id:'eng.write', name:'Writing', items:[
+            { id:'eng.write.1', name:'Essay Structure',       estMin:120, familiarity:0.40 },
+            { id:'eng.write.2', name:'Practical Writing',     estMin: 80, familiarity:0.30 }
+          ]},
+          { id:'eng.speak', name:'Listening & Speaking', items:[
+            { id:'eng.speak.1', name:'Listening Practice',    estMin: 80, familiarity:0.50 }
+          ]}
+        ]
+      }
+    ],
+    quizzes: [
+      { id:'q1', subjectId:'math',    date: addDays(t, 7),
+        title:'Math Quiz – Quadratics', difficulty:2, status:'planned',
+        topicIds:['math.quad'], itemIds:['math.quad.1','math.quad.2'] },
+      { id:'q2', subjectId:'physics', date: addDays(t, 14),
+        title:'Physics Quiz – Mechanics', difficulty:3, status:'planned',
+        topicIds:['phy.mech'], itemIds:['phy.mech.1','phy.mech.2'] }
+    ]
   };
 }
 
-let state = loadState();
 function loadState(){
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return defaultState();
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
     const s = JSON.parse(raw);
-    if (!s || !s.settings || !Array.isArray(s.subjects)) return defaultState();
-    s.done = s.done || {};
+    if (!s || !s.settings || !Array.isArray(s.subjects) || !Array.isArray(s.quizzes)) return null;
     return s;
-  } catch(e){ return defaultState(); }
+  }catch(e){ return null; }
 }
-function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
-
-/* ══════════════════════════════════════════════════════════
-   4. UI 狀態
-   ══════════════════════════════════════════════════════════ */
-const ui = { tab: "today", date: todayStr(), collapsed: new Set() };
-
-/* ══════════════════════════════════════════════════════════
-   5. 三層時間估算
-   ══════════════════════════════════════════════════════════ */
-function itemFirstMin(it){
-  const unit = UNIT_MIN[it.kind] ?? 25;
-  const qty = Math.max(1, it.amount ?? 1);
-  return Math.max(10, Math.round(unit * qty / 5) * 5);
-}
-function itemRemainingMin(it, subj, today){
-  let m = itemFirstMin(it) * (DIFF_W[it.difficulty] ?? 1) * FAM_MULT[it.familiarity ?? 0];
-  const d = daysBetween(today, subj.examDate);
-  if (d <= 60) m += itemFirstMin(it) * (PASTPAPER_ADD[it.kind] ?? 0.25);
-  return Math.round(m);
-}
-const topicFirstMin = tp => tp.items.reduce((a,it) => a + itemFirstMin(it), 0);
-const topicRemainingMin = (tp, subj, today) =>
-  tp.items.reduce((a,it) => a + itemRemainingMin(it, subj, today), 0);
-const subjectRemainingMin = (subj, today) =>
-  subj.topics.reduce((a,tp) => a + topicRemainingMin(tp, subj, today), 0);
-
-function progressOf(items){
-  let total = 0, done = 0;
-  for (const it of items){
-    const f = itemFirstMin(it);
-    total += f;
-    done  += f * (1 - FAM_MULT[it.familiarity ?? 0]);
-  }
-  return total ? done / total : 0;
-}
-const allItems = subj => subj.topics.flatMap(tp => tp.items);
-
-function getSubject(id){ return state.subjects.find(s => s.id === id); }
-function findItemById(id){
-  for (const s of state.subjects)
-    for (const tp of s.topics)
-      for (const it of tp.items)
-        if (it.id === id) return { subj:s, tp, it };
-  return null;
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
 }
 
-/* ══════════════════════════════════════════════════════════
-   6. 時間表：空閒區間 / 節數
-   ══════════════════════════════════════════════════════════ */
-function freeIntervals(dateStr){
-  const st = state.settings;
-  const ds = parseTime(st.dayStart), de = parseTime(st.dayEnd);
-  if (isNaN(ds) || isNaN(de) || de <= ds) return [];
-  let ivs = [[ds, de]];
-  for (const b of st.busy){
-    const bs = parseTime(b.start), be = parseTime(b.end);
-    if (isNaN(bs) || isNaN(be) || be <= bs) continue;
-    const out = [];
-    for (const [x,y] of ivs){
-      if (be <= x || bs >= y) { out.push([x,y]); continue; }
-      if (bs > x) out.push([x, bs]);
-      if (be < y) out.push([be, y]);
-    }
-    ivs = out;
-  }
-  return ivs.filter(([x,y]) => y - x >= 5).sort((a,b) => a[0] - b[0]);
+let state = loadState() || defaultState();
+
+/* =========================================================
+   核心運算
+   ========================================================= */
+function findSubject(id){ return state.subjects.find(s => s.id === id); }
+
+function itemRemainingMin(it){
+  return Math.max(0, Math.round(it.estMin * (1 - (it.familiarity ?? 0))));
 }
 
-function makeSlots(ivs){
-  const st = state.settings;
-  const slots = [];
-  for (const [a,b] of ivs){
-    let t = a;
-    while (t + st.minBlockMin <= b){
-      const len = Math.min(st.maxBlockMin, b - t);
-      slots.push([t, t + len]);
-      t += len + st.breakMin;
-    }
-  }
-  return slots;
+function subjectRemainingMin(subj){
+  let t = 0;
+  for (const tp of subj.topics) for (const it of tp.items) t += itemRemainingMin(it);
+  return t;
 }
 
-function dayCapacity(dateStr){
-  const st = state.settings;
-  const free = freeIntervals(dateStr).reduce((a,[x,y]) => a + (y - x), 0);
-  const eff  = st.maxBlockMin / (st.maxBlockMin + Math.max(1, st.breakMin));
-  return Math.max(0, Math.min(free * eff, st.maxStudyMinPerDay));
-}
-
-/* ══════════════════════════════════════════════════════════
-   7. 倒數反推 + 負荷檢查
-   ══════════════════════════════════════════════════════════ */
-function weeklyDemand(todayStr){
-  return state.subjects.map(s => {
-    const days   = Math.max(1, daysBetween(todayStr, s.examDate));
-    const remain = subjectRemainingMin(s, todayStr);
-    const examWk = remain / (days / 7);
-    const routineWk = s.routineMinPerWeek ?? 120;
-    return {
-      subj: s, remain, days, examWk, routineWk,
-      target: Math.max(examWk, routineWk)
-    };
-  }).filter(x => x.remain > 0);
-}
-
-function loadCheck(todayStr){
-  const demand = weeklyDemand(todayStr);
-  let avail = 0;
-  for (let i = 0; i < 7; i++) avail += dayCapacity(addDays(todayStr, i));
-  const need = demand.reduce((a,x) => a + x.target, 0);
-  const scale = need > avail && need > 0 ? avail / need : 1;
-  return { demand, avail, need, overload: Math.max(0, need - avail), scale };
-}
-
-function dailyTargets(todayStr){
-  const { demand, scale } = loadCheck(todayStr);
-  const map = {};
-  for (const d of demand) map[d.subj.id] = (d.target * scale) / 7;
-  return map;
-}
-
-/* ══════════════════════════════════════════════════════════
-   8. 排程
-   ══════════════════════════════════════════════════════════ */
-function pickItem(subj, today, exclude){
-  const pool0 = [];
-  for (const tp of subj.topics)
-    for (const it of tp.items)
-      if (!exclude.has(it.id)) pool0.push({ tp, it });
-  if (!pool0.length) return null;
-
-  const due = pool0.filter(x => x.it.nextReviewAt && x.it.nextReviewAt <= today);
-  const pool = due.length ? due : pool0.filter(x => (x.it.familiarity ?? 0) < 4);
-  if (!pool.length) return null;
-
-  pool.sort((a,b) => {
-    const da = (a.it.nextReviewAt && a.it.nextReviewAt <= today) ? 1 : 0;
-    const db = (b.it.nextReviewAt && b.it.nextReviewAt <= today) ? 1 : 0;
-    if (da !== db) return db - da;                                   // 到期複習先
-    const fa = a.it.familiarity ?? 0, fb = b.it.familiarity ?? 0;
-    if (fa !== fb) return fa - fb;                                   // 未學先
-    return (b.it.difficulty ?? 2) - (a.it.difficulty ?? 2);          // 難的先
-  });
-  return pool[0];
-}
-
-function buildPlan(today){
-  const st = state.settings;
-  const slots = makeSlots(freeIntervals(today));
-  const tgt   = dailyTargets(today);
-  const cap   = dayCapacity(today);
-  const doneToday = state.done[today] || {};
-  const exclude = new Set(Object.keys(doneToday));
-  const used = {};
-  const plan = [];
+/* 測驗總需時 */
+function quizRequiredMin(quiz){
+  const subj = findSubject(quiz.subjectId);
+  if (!subj) return 0;
+  const mult = ({1:1.0, 2:1.15, 3:1.35})[quiz.difficulty] ?? 1.0;
+  const wantItems = new Set(quiz.itemIds || []);
   let total = 0;
 
-  for (const [ss,se] of slots){
-    if (cap - total < st.minBlockMin) break;
-
-    const cand = Object.keys(tgt)
-      .filter(id => (used[id] || 0) < tgt[id] - 1)
-      .sort((a,b) => (used[a] || 0)/tgt[a] - (used[b] || 0)/tgt[b]);
-    if (!cand.length) break;
-
-    const subj = getSubject(cand[0]);
-    if (!subj) { tgt[cand[0]] = 0; continue; }
-
-    const pick = pickItem(subj, today, exclude);
-    if (!pick) { tgt[subj.id] = 0; continue; }
-
-    const remainTgt = tgt[subj.id] - (used[subj.id] || 0);
-    let len = Math.min(se - ss, st.maxBlockMin, remainTgt, cap - total);
-    if (len < st.minBlockMin) { tgt[subj.id] = used[subj.id] || 0; continue; }
-
-    len = Math.round(len);
-    plan.push({
-      subjId: subj.id, subject: subj.name,
-      topicId: pick.tp.id, topic: pick.tp.name,
-      itemId: pick.it.id, item: pick.it.name,
-      kind: pick.it.kind,
-      start: toTime(ss), end: toTime(ss + len), min: len
-    });
-    used[subj.id] = (used[subj.id] || 0) + len;
-    exclude.add(pick.it.id);
-    total += len;
-  }
-  return plan;
-}
-
-/* ══════════════════════════════════════════════════════════
-   9. 完成 / 復原（SM-2 lite）
-   ══════════════════════════════════════════════════════════ */
-function completeItem(itemId){
-  const f = findItemById(itemId);
-  if (!f) return;
-  const d = ui.date;
-  const before = itemRemainingMin(f.it, f.subj, d);
-  const prevFam  = f.it.familiarity ?? 0;
-  const prevNext = f.it.nextReviewAt ?? null;
-
-  f.it.familiarity = Math.min(4, prevFam + 1);
-  const gap = REVIEW_GAPS[Math.min(f.it.familiarity, REVIEW_GAPS.length - 1)];
-  f.it.nextReviewAt = addDays(d, gap);
-
-  state.done[d] = state.done[d] || {};
-  state.done[d][itemId] = { min: before, prevFam, prevNext, at: Date.now() };
-  save(); render();
-}
-
-function undoItem(itemId){
-  const d = ui.date;
-  const rec = (state.done[d] || {})[itemId];
-  const f = findItemById(itemId);
-  if (!rec || !f) return;
-  f.it.familiarity = rec.prevFam;
-  f.it.nextReviewAt = rec.prevNext;
-  delete state.done[d][itemId];
-  if (!Object.keys(state.done[d]).length) delete state.done[d];
-  save(); render();
-}
-
-/* ══════════════════════════════════════════════════════════
-   10. 渲染
-   ══════════════════════════════════════════════════════════ */
-const bar = p => `<div class="bar"><i style="width:${Math.max(0,Math.min(100, Math.round(p*100)))}%"></i></div>`;
-
-function renderTop(){
-  const lc = loadCheck(ui.date);
-  const totalRemain = state.subjects.reduce((a,s) => a + subjectRemainingMin(s, ui.date), 0);
-  const el = document.getElementById("stats");
-  const over = lc.overload > 0;
-  el.innerHTML = `
-    <span class="pill">剩餘 ${fmtMin(totalRemain)}</span>
-    <span class="pill ${over ? "warn" : "ok"}">
-      每週需要 ${fmtMin(lc.need)} / 可用 ${fmtMin(lc.avail)}
-      ${over ? "· 超載 " + fmtMin(lc.overload) : ""}
-    </span>`;
-  document.querySelectorAll("#tabs button").forEach(b => {
-    b.classList.toggle("on", b.dataset.tab === ui.tab);
-  });
-}
-
-/* ── 今日 ── */
-function renderToday(){
-  const d = ui.date;
-  const lc = loadCheck(d);
-  const plan = buildPlan(d);
-  const doneMap = state.done[d] || {};
-  const tgt = dailyTargets(d);
-  const targetMin = Object.values(tgt).reduce((a,b) => a + b, 0);
-  const plannedMin = plan.reduce((a,p) => a + p.min, 0);
-  const doneMin = Object.values(doneMap).reduce((a,x) => a + (x.min || 0), 0);
-
-  let h = "";
-
-  // 日期列
-  h += `<div class="datebar">
-    <button class="btn sm" data-act="date-prev">‹ 前一日</button>
-    <span class="d">${d}</span>
-    <button class="btn sm" data-act="date-next">後一日 ›</button>
-    <button class="btn sm" data-act="date-today">回到今日</button>
-    <span class="mut" style="margin-left:auto">
-      可用 ${Math.round(dayCapacity(d))} 分 · 上限 ${state.settings.maxStudyMinPerDay} 分
-    </span>
-  </div>`;
-
-  // 負荷橫幅
-  if (lc.overload > 0){
-    h += `<div class="banner red">
-      ⚠️ <b>本週需要 ${fmtMin(lc.need)}，但你只有 ${fmtMin(lc.avail)}。</b>
-      已自動按比例縮放至 <b>${Math.round(lc.scale*100)}%</b>（每科等比縮，唔會砍死某一科）。
-      建議：降低某科熟悉度要求、延後非考試科、或提高每日上限。
-    </div>`;
-  } else if (lc.scale < 0.999){
-    h += `<div class="banner amb">已按可用時間等比縮放至 ${Math.round(lc.scale*100)}%。</div>`;
-  }
-
-  // 摘要
-  h += `<div class="summary">
-    <div class="stat"><div class="k">今日目標</div><div class="v">${Math.round(targetMin)}<small> 分</small></div></div>
-    <div class="stat"><div class="k">已排</div><div class="v">${plannedMin}<small> 分</small></div></div>
-    <div class="stat"><div class="k">已完成</div><div class="v">${doneMin}<small> 分</small></div></div>
-    <div class="stat"><div class="k">科目數</div><div class="v">${Object.keys(tgt).length}<small> 科</small></div></div>
-  </div>`;
-
-  // 已完成
-  const doneIds = Object.keys(doneMap);
-  if (doneIds.length){
-    h += `<div class="card"><h3>已完成 ${doneIds.length} 項</h3>`;
-    for (const id of doneIds){
-      const f = findItemById(id);
-      if (!f) continue;
-      h += `<div class="row item done">
-        <button class="chk on" data-act="undo-item" data-item="${esc(id)}" title="復原">✓</button>
-        <span class="nm">${esc(f.it.name)}</span>
-        <span class="sub">${esc(f.subj.name)} · ${esc(f.tp.name)}</span>
-        <span class="min">${Math.round(doneMap[id].min)} min</span>
-      </div>`;
-    }
-    h += `</div>`;
-  }
-
-  // 計畫
-  h += `<div class="card"><h3>今日排程</h3>`;
-  if (!plan.length){
-    h += `<div class="empty">今日沒有可排的項目 —— 可能全部已完成、或可用時間不足。<br>
-      <span class="mut">檢查「設定」的作息與固定佔用時段。</span></div>`;
-  } else {
-    for (const p of plan){
-      h += `<div class="row item" data-act="jump" data-subj="${esc(p.subjId)}" data-topic="${esc(p.topicId)}">
-        <button class="chk" data-act="complete" data-item="${esc(p.itemId)}" title="標記完成">✓</button>
-        <span class="time">${p.start}–${p.end}</span>
-        <span class="nm">${esc(p.item)}</span>
-        <span class="sub">${esc(p.subject)} · ${esc(p.topic)} · ${KIND_LABEL[p.kind] || p.kind}</span>
-        <span class="min">${p.min} min</span>
-      </div>`;
+  for (const tp of subj.topics){
+    const selected = (quiz.topicIds || []).includes(tp.id);
+    for (const it of tp.items){
+      let include;
+      if (wantItems.size) include = wantItems.has(it.id);
+      else                include = selected;
+      if (include) total += itemRemainingMin(it) * mult;
     }
   }
-  h += `</div>`;
-  return h;
+  return Math.round(total / 5) * 5;
 }
 
-/* ── 課程樹 ── */
-function renderCourse(){
-  let h = `<div class="card">`;
-  if (!state.subjects.length){
-    h += `<div class="empty">尚未有任何科目，去「設定」加入。</div>`;
+/* 測驗緊急度 */
+function quizUrgency(quiz, dateStr){
+  const days  = Math.max(1, daysBetween(dateStr, quiz.date));
+  const need  = quizRequiredMin(quiz);
+  const diffW = ({1:0.8, 2:1.0, 3:1.3})[quiz.difficulty] ?? 1;
+  return (need / Math.pow(days, 1.5)) * diffW;
+}
+
+function nearestUpcomingQuiz(dateStr, subjectId){
+  let best = null;
+  for (const q of state.quizzes){
+    if (q.status !== 'planned' || q.subjectId !== subjectId) continue;
+    if (daysBetween(dateStr, q.date) < 0) continue;
+    if (!best || q.date < best.date) best = q;
   }
-  for (const s of state.subjects){
-    const rem  = subjectRemainingMin(s, ui.date);
-    const prog = progressOf(allItems(s));
-    const dd   = daysBetween(ui.date, s.examDate);
-    const open = !ui.collapsed.has(s.id);
-    const soon = dd <= 60;
+  return best;
+}
 
-    h += `<div class="subjhead" data-act="toggle" data-id="${esc(s.id)}">
-      <span class="caret">${open ? "▼" : "▶"}</span>
-      <span class="nm">${esc(s.name)}</span>
-      <span class="mut">剩餘 ${fmtMin(rem)}</span>
-      ${bar(prog)}
-      <span class="mut" style="width:38px;text-align:right">${Math.round(prog*100)}%</span>
-      <span class="tag ${soon ? "red" : ""}">倒數 ${dd} 日</span>
-    </div>`;
+/* 當日該科上限（測驗保護規則） */
+function subjectDayCap(dateStr, subjectId){
+  let cap = Infinity;
+  for (const q of state.quizzes){
+    if (q.status !== 'planned' || q.subjectId !== subjectId) continue;
+    const d = daysBetween(dateStr, q.date);
+    if (d === 0) return 0;                       // 測驗當日：清零
+    if (d === 1) cap = Math.min(cap, 90);        // 測驗前 1 日：上限 90 分
+  }
+  return cap;
+}
 
-    if (!open) continue;
+/* 今日需求（分鐘） */
+function subjectDemand(dateStr, subjectId){
+  let demand = 0;
 
-    h += `<div class="topics">`;
-    for (const tp of s.topics){
-      const trem = topicRemainingMin(tp, s, ui.date);
-      const tprog = progressOf(tp.items);
-      const topen = !ui.collapsed.has(tp.id);
+  // 1) 測驗需求（14 日內）
+  for (const q of state.quizzes){
+    if (q.status !== 'planned' || q.subjectId !== subjectId) continue;
+    const d = daysBetween(dateStr, q.date);
+    if (d < 0 || d > 14) continue;
+    const perDay = Math.ceil(quizRequiredMin(q) / Math.max(1, d));
+    demand = Math.max(demand, perDay);
+  }
 
-      h += `<div class="topichead" data-act="toggle" data-id="${esc(tp.id)}">
-        <span class="caret">${topen ? "▼" : "▶"}</span>
-        <span class="nm">${esc(tp.name)}</span>
-        <span class="mut">${fmtMin(trem)}</span>
-        ${bar(tprog)}
-        <span class="mut" style="width:38px;text-align:right">${Math.round(tprog*100)}%</span>
-        <button class="btn sm" data-act="add-item" data-s="${esc(s.id)}" data-t="${esc(tp.id)}" title="新增細項">＋</button>
-        <button class="btn sm danger" data-act="del-topic" data-s="${esc(s.id)}" data-t="${esc(tp.id)}" title="刪除 topic">✕</button>
-      </div>`;
-
-      if (!topen) continue;
-
-      h += `<div class="items">`;
-      for (const it of tp.items){
-        const first = itemFirstMin(it);
-        const left  = itemRemainingMin(it, s, ui.date);
-        const fam   = it.familiarity ?? 0;
-        const due   = it.nextReviewAt && it.nextReviewAt <= ui.date;
-        h += `<div class="row item" data-act="edit-item"
-                data-s="${esc(s.id)}" data-t="${esc(tp.id)}" data-i="${esc(it.id)}">
-          <span class="fam fam${fam}">${FAM[fam]}</span>
-          <span class="nm">${esc(it.name)}</span>
-          <span class="sub">${KIND_LABEL[it.kind] || it.kind} · ${it.amount}${it.kind==="calc"?" 題":""} · 難度${DIFF_LB[it.difficulty]||"中"}</span>
-          <span class="mut">${it.nextReviewAt ? (due ? `<b style="color:var(--red)">到期 ${it.nextReviewAt}</b>` : "下次 " + it.nextReviewAt) : "—"}</span>
-          <span class="min">${first} → ${left} min</span>
-        </div>`;
-      }
-      if (!tp.items.length) h += `<div class="empty" style="padding:10px">此 topic 未有細項</div>`;
-      h += `</div>`;
+  // 2) DSE 恆常需求
+  const subj = findSubject(subjectId);
+  if (subj){
+    const days = daysBetween(dateStr, subj.examDate);
+    const need = subjectRemainingMin(subj);
+    if (days >= 0 && need > 0){
+      demand = Math.max(demand, Math.max(30, Math.ceil(need / Math.max(1, days))));
     }
-    h += `<div class="addline">
-      <button class="btn sm" data-act="add-topic" data-s="${esc(s.id)}">＋ 新增 topic</button>
-      <button class="btn sm danger" data-act="del-subject" data-s="${esc(s.id)}" style="float:right">刪除科目</button>
-    </div>`;
-    h += `</div>`;
   }
-  h += `</div>`;
-  return h;
+  return demand;
 }
 
-/* ── 負荷 ── */
-function renderLoad(){
-  const lc = loadCheck(ui.date);
-  let h = "";
-
-  if (lc.overload > 0){
-    h += `<div class="banner red">
-      ⚠️ <b>本週需要 ${fmtMin(lc.need)}，可用只有 ${fmtMin(lc.avail)}，超載 ${fmtMin(lc.overload)}。</b>
-      計畫已按 ${Math.round(lc.scale*100)}% 等比縮放。可考慮：調低某科恆常配額、延後非考試科、或提高每日上限。
-    </div>`;
-  } else {
-    h += `<div class="banner amb" style="background:var(--grn2);border-color:#c9e9d4;color:#0f7a37">
-      ✅ 本週需要 ${fmtMin(lc.need)}，可用 ${fmtMin(lc.avail)}，餘裕 ${fmtMin(lc.avail - lc.need)}。
-    </div>`;
-  }
-
-  h += `<div class="card"><h3>各科需求（以 ${ui.date} 為基準，往後 7 日）</h3>
-  <table>
-    <thead><tr>
-      <th>科目</th><th>考試日</th><th class="num">倒數</th><th class="num">剩餘</th>
-      <th class="num">考試模式/週</th><th class="num">恆常/週</th><th class="num">採用/週</th>
-      <th style="width:110px">進度</th>
-    </tr></thead><tbody>`;
-
-  for (const x of lc.demand){
-    const s = x.subj;
-    const prog = progressOf(allItems(s));
-    const examSoon = x.days <= 60;
-    h += `<tr>
-      <td><b>${esc(s.name)}</b></td>
-      <td><input type="date" style="width:140px" data-subjset="examDate" data-id="${esc(s.id)}" value="${s.examDate}"></td>
-      <td class="num ${examSoon ? "tag red" : ""}">${x.days}</td>
-      <td class="num">${fmtMin(x.remain)}</td>
-      <td class="num">${Math.round(x.examWk)}</td>
-      <td class="num"><input type="number" style="width:78px;text-align:right" min="0" step="15"
-            data-subjset="routineMinPerWeek" data-id="${esc(s.id)}" value="${s.routineMinPerWeek}"></td>
-      <td class="num"><b>${Math.round(x.target)}</b></td>
-      <td>${bar(prog)}<span class="mut">${Math.round(prog*100)}%</span></td>
-    </tr>`;
-  }
-
-  h += `<tr class="total">
-      <td>合計</td><td></td><td></td>
-      <td class="num">${fmtMin(lc.demand.reduce((a,x)=>a+x.remain,0))}</td>
-      <td class="num">${Math.round(lc.demand.reduce((a,x)=>a+x.examWk,0))}</td>
-      <td class="num">${Math.round(lc.demand.reduce((a,x)=>a+x.routineWk,0))}</td>
-      <td class="num">${fmtMin(lc.need)}</td>
-      <td></td>
-    </tr></tbody></table>
-    <p class="hint">「採用/週」= max(考試模式, 恆常配額)。考試模式由剩餘分鐘 ÷ 剩餘週數反推；恆常配額係防止某科被餓死的地板。</p>
-  </div>`;
-
-  return h;
-}
-
-/* ── 設定 ── */
-function renderSettings(){
+/* 一天的固定時段與自由窗口 */
+function dayTimeline(dateStr){
   const s = state.settings;
-  const available = Object.keys(DSE_TOPICS).filter(id => !getSubject(id));
+  const wd = weekdayOf(dateStr);
+  const isSchool = wd >= 1 && wd <= 5;
+  const fixed = [];
+  let freeStart;
 
-  let h = `<div class="card"><h3>每日可用時間</h3>
-    <div class="grid2">
-      <label class="fld">起床／開始<input type="time" data-set="dayStart" value="${s.dayStart}"></label>
-      <label class="fld">睡覺／結束<input type="time" data-set="dayEnd" value="${s.dayEnd}"></label>
-      <label class="fld">每節最長（分）<input type="number" min="10" max="120" data-set="maxBlockMin" value="${s.maxBlockMin}"></label>
-      <label class="fld">每節最短（分）<input type="number" min="5" max="60" data-set="minBlockMin" value="${s.minBlockMin}"></label>
-      <label class="fld">小休（分）<input type="number" min="0" max="30" data-set="breakMin" value="${s.breakMin}"></label>
-      <label class="fld">每日溫習上限（分）<input type="number" min="30" max="720" data-set="maxStudyMinPerDay" value="${s.maxStudyMinPerDay}"></label>
-    </div>
-    <h3 style="margin-top:18px">固定佔用時段（每日通用，一行一段）</h3>
-    <textarea rows="4" data-busy placeholder="09:00-15:30">${s.busy.map(b => b.start + "-" + b.end).join("\n")}</textarea>
-    <p class="hint">例如 <code>08:00-15:30</code>（上學）、<code>16:00-18:00</code>（補習）。會從每日視窗中扣除。</p>
-  </div>`;
+  if (isSchool){
+    const schoolS = toMin(s.schoolStart);
+    const schoolE = toMin(s.schoolEnd);
+    fixed.push({ start: schoolS, end: schoolE, label: '學校', kind: 'school' });
 
-  h += `<div class="card"><h3>加入科目</h3>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <select id="add-subj" style="max-width:260px">
-        ${available.length
-          ? available.map(id => `<option value="${id}">${esc(SUBJ_NAME[id] || id)}</option>`).join("")
-          : `<option value="">（全部已加入）</option>`}
-      </select>
-      <button class="btn primary" data-act="add-subject" ${available.length ? "" : "disabled"}>加入</button>
-    </div>
-    <p class="hint">加入時會按該科特性自動生成基礎細項，之後可在「課程」逐項調整。</p>
-  </div>`;
+    const commuteEnd = schoolE + Number(s.commuteHome);
+    if (commuteEnd > schoolE)
+      fixed.push({ start: schoolE, end: commuteEnd, label: '通勤', kind: 'buffer' });
 
-  h += `<div class="card"><h3>資料</h3>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" data-act="export">匯出 JSON</button>
-      <button class="btn" data-act="import">匯入 JSON</button>
-      <button class="btn danger" data-act="reset">重設為示範資料</button>
-    </div>
-    <p class="hint">資料自動存在瀏覽器 localStorage；換機前請匯出。</p>
-    <input type="file" id="import-file" accept="application/json" style="display:none">
-  </div>`;
+    const windEnd = commuteEnd + Number(s.windDown);
+    if (Number(s.windDown) > 0)
+      fixed.push({ start: commuteEnd, end: windEnd, label: '休息 / 緩衝', kind: 'buffer' });
 
-  h += `<div class="card"><h3>計算方式</h3>
-    <p class="hint" style="line-height:1.9">
-      <b>細項剩餘</b> = 首次分鐘 × 難度權重 × 熟悉度係數（未學 1.0 / 學過 0.6 / 複習1 0.35 / 複習2 0.2 / 熟練 0.08）<br>
-      <b>首次分鐘</b> = 類型單位分鐘 × 份量（calc 以題數計，其他以節／篇／組計）<br>
-      <b>考前 60 日</b> 自動加上操卷加壓（calc / essay +40%，其他 +15–30%）<br>
-      <b>每週需求</b> = max( 剩餘 ÷ 剩餘週數 , 恆常配額 )<br>
-      <b>超載</b> 時全部科目按 <code>可用 ÷ 需求</code> 等比縮放，並受每日上限約束<br>
-      <b>完成一次</b> 熟悉度 +1，下次複習日按 1 / 3 / 7 / 14 / 30 / 60 日間隔排入佇列
-    </p>
-  </div>`;
+    const dinnerEnd = windEnd + Number(s.dinner);
+    if (Number(s.dinner) > 0)
+      fixed.push({ start: windEnd, end: dinnerEnd, label: '晚餐', kind: 'buffer' });
 
-  return h;
-}
-
-function render(){
-  const el = document.getElementById("app");
-  if (ui.tab === "today")      el.innerHTML = renderToday();
-  else if (ui.tab === "course") el.innerHTML = renderCourse();
-  else if (ui.tab === "load")   el.innerHTML = renderLoad();
-  else                          el.innerHTML = renderSettings();
-  renderTop();
-}
-
-/* ══════════════════════════════════════════════════════════
-   11. 事件
-   ══════════════════════════════════════════════════════════ */
-document.addEventListener("click", e => {
-  const el = e.target.closest("[data-act]");
-  if (!el) return;
-  const act = el.dataset.act;
-
-  switch (act){
-    case "tab":
-      ui.tab = el.dataset.tab;
-      render();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-
-    case "date-prev":  ui.date = addDays(ui.date, -1); render(); return;
-    case "date-next":  ui.date = addDays(ui.date,  1); render(); return;
-    case "date-today": ui.date = todayStr(); render(); return;
-
-    case "toggle": {
-      const id = el.dataset.id;
-      if (ui.collapsed.has(id)) ui.collapsed.delete(id); else ui.collapsed.add(id);
-      render(); return;
-    }
-
-    case "complete":
-      e.stopPropagation();
-      completeItem(el.dataset.item);
-      return;
-
-    case "undo-item":
-      e.stopPropagation();
-      undoItem(el.dataset.item);
-      return;
-
-    case "edit-item":
-      openItemModal(el.dataset.s, el.dataset.t, el.dataset.i);
-      return;
-
-    case "add-item":
-      e.stopPropagation();
-      openItemModal(el.dataset.s, el.dataset.t, null);
-      return;
-
-    case "add-topic": {
-      const s = getSubject(el.dataset.s);
-      if (!s) return;
-      const name = prompt("新 topic 名稱：");
-      if (!name || !name.trim()) return;
-      s.topics.push({ id: `${s.id}.t${Date.now().toString(36)}`, name: name.trim(), items: [] });
-      save(); render(); return;
-    }
-
-    case "del-topic": {
-      e.stopPropagation();
-      const s = getSubject(el.dataset.s);
-      if (!s) return;
-      if (!confirm("確定刪除此 topic 及其所有細項？")) return;
-      s.topics = s.topics.filter(t => t.id !== el.dataset.t);
-      save(); render(); return;
-    }
-
-    case "del-subject": {
-      e.stopPropagation();
-      const s = getSubject(el.dataset.s);
-      if (!s) return;
-      if (!confirm(`確定刪除科目「${s.name}」？`)) return;
-      state.subjects = state.subjects.filter(x => x.id !== s.id);
-      save(); render(); return;
-    }
-
-    case "add-subject": {
-      const sel = document.getElementById("add-subj");
-      const id = sel && sel.value;
-      if (!id || getSubject(id)) return;
-      state.subjects.push(makeSubject(id));
-      save(); render(); return;
-    }
-
-    case "jump": {
-      ui.tab = "course";
-      ui.collapsed.delete(el.dataset.subj);
-      ui.collapsed.delete(el.dataset.topic);
-      render();
-      return;
-    }
-
-    case "export": {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `dse-planner-${todayStr()}.json`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-      return;
-    }
-
-    case "import":
-      document.getElementById("import-file").click();
-      return;
-
-    case "reset":
-      if (!confirm("重設為示範資料？所有進度會消失。")) return;
-      state = defaultState();
-      ui.collapsed.clear();
-      save(); render(); return;
+    freeStart = dinnerEnd;
+  } else {
+    freeStart = toMin(s.weekendStart);
   }
+  return { freeStart, freeEnd: toMin(s.bedtime), fixed };
+}
+
+/* 挑選下一個要排的科目 */
+function pickSubject(dateStr, demands, allocated){
+  let best = null, bestScore = 0;
+  for (const id in demands){
+    const rem = demands[id] - (allocated[id] || 0);
+    if (rem <= 0) continue;
+    if ((allocated[id] || 0) >= subjectDayCap(dateStr, id)) continue;
+
+    let score = rem;
+    const q = nearestUpcomingQuiz(dateStr, id);
+    if (q){
+      const d = daysBetween(dateStr, q.date);
+      if (d <= 1) score *= 3;
+      else if (d <= 3) score *= 1.8;
+      else if (d <= 7) score *= 1.3;
+    }
+    if (score > bestScore){ bestScore = score; best = id; }
+  }
+  return best;
+}
+
+/* 生成一天計劃 */
+function buildPlan(dateStr){
+  const s = state.settings;
+  const tl = dayTimeline(dateStr);
+  if (tl.freeEnd <= tl.freeStart) return [];
+
+  const demands = {};
+  for (const subj of state.subjects){
+    const d = subjectDemand(dateStr, subj.id);
+    if (d > 0) demands[subj.id] = d;
+  }
+
+  const allocated = {};
+  const blocks = [];
+  const BLOCK = Number(s.blockMin) || 30;
+  const BRK   = Number(s.breakMin) || 0;
+
+  let cursor = tl.freeStart;
+  let guard = 0;
+
+  while (cursor + 15 <= tl.freeEnd && guard++ < 300){
+    const pick = pickSubject(dateStr, demands, allocated);
+    if (!pick) break;
+
+    const len = Math.min(BLOCK, tl.freeEnd - cursor);
+    if (len < 15) break;
+
+    blocks.push({ start: cursor, end: cursor + len, subjectId: pick });
+    allocated[pick] = (allocated[pick] || 0) + len;
+    cursor += len + BRK;
+  }
+  return blocks;
+}
+
+/* 本週（7 日）測驗需求 vs 可用時間 */
+function weeklyStats(dateStr){
+  let quizNeed = 0;
+  const list = [];
+  for (const q of state.quizzes){
+    if (q.status !== 'planned') continue;
+    const d = daysBetween(dateStr, q.date);
+    if (d >= 0 && d <= 6){
+      const need = quizRequiredMin(q);
+      quizNeed += need;
+      list.push({ q, need, d });
+    }
+  }
+  let avail = 0;
+  for (let i = 0; i < 7; i++){
+    const tl = dayTimeline(addDays(dateStr, i));
+    avail += Math.max(0, tl.freeEnd - tl.freeStart);
+  }
+  avail = Math.round(avail * 0.85); // 扣休息
+  return { quizNeed, avail, list };
+}
+
+/* =========================================================
+   UI 狀態
+   ========================================================= */
+let activeTab = 'today';
+let draft = null;
+
+function newDraft(){
+  const first = state.subjects[0];
+  return {
+    subjectId: first ? first.id : '',
+    date: addDays(todayStr(), 7),
+    title: '',
+    difficulty: 2,
+    itemIds: new Set()
+  };
+}
+
+/* =========================================================
+   渲染：今日
+   ========================================================= */
+function viewToday(){
+  const date = todayStr();
+  const tl = dayTimeline(date);
+  const plan = buildPlan(date);
+  const available = Math.max(0, tl.freeEnd - tl.freeStart);
+  const planned = plan.reduce((a, b) => a + (b.end - b.start), 0);
+
+  const entries = [
+    ...tl.fixed,
+    ...plan.map(b => ({ ...b, kind: 'study' }))
+  ].sort((a, b) => a.start - b.start);
+
+  const rows = entries.map(e => {
+    if (e.kind === 'study'){
+      const subj = findSubject(e.subjectId);
+      const q = nearestUpcomingQuiz(date, e.subjectId);
+      const dLeft = q ? daysBetween(date, q.date) : null;
+      const isQuiz = q && dLeft <= 14;
+      return `<div class="tl-row study">
+        <div class="tl-time">${toTime(e.start)}<span>${toTime(e.end)}</span></div>
+        <div class="tl-dot" style="background:${subj ? subj.color : '#94a3b8'}"></div>
+        <div class="tl-body">
+          <div class="tl-title">${esc(subj ? subj.name : '？')}</div>
+          <div class="tl-sub">${isQuiz ? '⚡ 測驗衝刺 · 距測驗 ' + dLeft + ' 天' : 'DSE 恆常溫習'}</div>
+        </div>
+        <div class="tl-dur">${e.end - e.start} 分</div>
+      </div>`;
+    }
+    return `<div class="tl-row ${e.kind}">
+      <div class="tl-time">${toTime(e.start)}<span>${toTime(e.end)}</span></div>
+      <div class="tl-dot" style="background:#cbd5e1"></div>
+      <div class="tl-body"><div class="tl-title">${esc(e.label)}</div></div>
+      <div class="tl-dur">${e.end - e.start} 分</div>
+    </div>`;
+  }).join('');
+
+  const wk = weeklyStats(date);
+  let banner = '';
+  if (wk.list.length){
+    const overload = wk.quizNeed > wk.avail * 0.6;
+    banner = `<div class="banner ${overload ? 'warn' : 'ok'}">
+      <span>${overload ? '⚠️' : '✅'}</span>
+      <div>
+        <b>本週測驗需求 ${fmtDur(wk.quizNeed)}</b>，放學後可用約 ${fmtDur(wk.avail)}。
+        ${overload
+          ? '建議將部分溫習移至週末，或優先處理高難度課題。'
+          : '時間分配尚可，保持節奏即可。'}
+      </div>
+    </div>`;
+  }
+
+  const upcoming = state.quizzes
+    .filter(q => q.status === 'planned' &&
+                 daysBetween(date, q.date) >= 0 &&
+                 daysBetween(date, q.date) <= 14)
+    .sort((a, b) => a.date < b.date ? -1 : 1);
+
+  const upcomingHtml = upcoming.length ? upcoming.map(q => {
+    const subj = findSubject(q.subjectId);
+    const d = daysBetween(date, q.date);
+    const need = quizRequiredMin(q);
+    const cls = d <= 3 ? 'urgent' : (d <= 7 ? 'soon' : 'later');
+    return `<div class="quiz-item">
+      <div class="dot" style="background:${subj ? subj.color : '#94a3b8'}"></div>
+      <div class="meta">
+        <div class="t">${esc(q.title || (subj ? subj.name + ' 測驗' : '測驗'))}</div>
+        <div class="s">${q.date} · 需時 ${fmtDur(need)} · 平均每日 ${Math.ceil(need / Math.max(1, d))} 分</div>
+      </div>
+      <span class="pill ${cls}">${d === 0 ? '今日' : d + ' 天'}</span>
+    </div>`;
+  }).join('') : `<div class="empty">未來 14 日未有測驗</div>`;
+
+  return `
+    ${banner}
+    <div class="card">
+      <h2>今日總覽</h2>
+      <div class="stats">
+        <div class="stat"><div class="v">${fmtDur(available)}</div><div class="k">放學後可用</div></div>
+        <div class="stat"><div class="v">${fmtDur(planned)}</div><div class="k">已排溫習</div></div>
+        <div class="stat"><div class="v">${fmtDur(available - planned)}</div><div class="k">剩餘緩衝</div></div>
+        <div class="stat"><div class="v">${upcoming.length}</div><div class="k">14 日內測驗</div></div>
+      </div>
+      <div class="small muted mt12">
+        學校 ${state.settings.schoolStart}–${state.settings.schoolEnd} · 通勤 ${state.settings.commuteHome} 分 ·
+        可溫習窗口 ${toTime(tl.freeStart)}–${toTime(tl.freeEnd)}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>今日時間表 <span class="badge">${WD[weekdayOf(date)]}</span></h2>
+      ${rows || '<div class="empty">今日冇排到溫習，好好休息 😌</div>'}
+    </div>
+
+    <div class="card">
+      <h2>未來 14 日測驗</h2>
+      ${upcomingHtml}
+    </div>
+  `;
+}
+
+/* =========================================================
+   渲染：測驗
+   ========================================================= */
+function viewQuizzes(){
+  if (!draft) draft = newDraft();
+  const subj = findSubject(draft.subjectId);
+
+  const subjOptions = state.subjects.map(s =>
+    `<option value="${s.id}" ${s.id === draft.subjectId ? 'selected' : ''}>${esc(s.name)}</option>`
+  ).join('');
+
+  let tree = '';
+  if (subj){
+    for (const tp of subj.topics){
+      const allChecked = tp.items.length > 0 && tp.items.every(it => draft.itemIds.has(it.id));
+      tree += `<div class="topic-block">
+        <label class="topic-label">
+          <input type="checkbox" data-quiz-topic="${tp.id}" ${allChecked ? 'checked' : ''}>
+          <span>${esc(tp.name)}</span>
+        </label>
+        <div class="item-list">
+          ${tp.items.map(it => `
+            <label class="item-check">
+              <input type="checkbox" data-quiz-item="${it.id}" ${draft.itemIds.has(it.id) ? 'checked' : ''}>
+              <span>${esc(it.name)}</span>
+              <span class="muted">剩 ${itemRemainingMin(it)} 分</span>
+            </label>`).join('')}
+        </div>
+      </div>`;
+    }
+  } else {
+    tree = '<div class="empty">請先在「課程樹」建立科目</div>';
+  }
+
+  const list = state.quizzes
+    .filter(q => q.status !== 'cancelled')
+    .slice()
+    .sort((a, b) => a.date < b.date ? -1 : 1);
+
+  const listHtml = list.length ? list.map(q => {
+    const s = findSubject(q.subjectId);
+    const d = daysBetween(todayStr(), q.date);
+    const need = quizRequiredMin(q);
+    const cls = q.status === 'done' ? 'done' : (d < 0 ? 'done' : d <= 3 ? 'urgent' : d <= 7 ? 'soon' : 'later');
+    const label = q.status === 'done' ? '已完成' : (d < 0 ? '已過期' : d === 0 ? '今日' : d + ' 天');
+    return `<div class="quiz-item">
+      <div class="dot" style="background:${s ? s.color : '#94a3b8'}"></div>
+      <div class="meta">
+        <div class="t">${esc(q.title || (s ? s.name + ' 測驗' : '測驗'))}</div>
+        <div class="s">${esc(s ? s.name : '？')} · ${q.date} · 需時 ${fmtDur(need)}</div>
+      </div>
+      <span class="pill ${cls}">${label}</span>
+      <button class="danger-sm" data-action="del-quiz" data-id="${q.id}" title="刪除">✕</button>
+    </div>`;
+  }).join('') : '<div class="empty">尚未加入任何測驗</div>';
+
+  return `
+    <div class="card">
+      <h2>新增測驗</h2>
+      <div class="grid2">
+        <div>
+          <label class="fld">科目</label>
+          <select id="q-subject">${subjOptions}</select>
+        </div>
+        <div>
+          <label class="fld">測驗日期</label>
+          <input type="date" id="q-date" value="${draft.date}">
+        </div>
+        <div>
+          <label class="fld">名稱（可選）</label>
+          <input type="text" id="q-title" value="${esc(draft.title)}" placeholder="例如 Physics Quiz – Mechanics">
+        </div>
+        <div>
+          <label class="fld">難度自評</label>
+          <div class="segmented" id="q-diff">
+            <button data-d="1" class="${draft.difficulty === 1 ? 'on' : ''}">易</button>
+            <button data-d="2" class="${draft.difficulty === 2 ? 'on' : ''}">中</button>
+            <button data-d="3" class="${draft.difficulty === 3 ? 'on' : ''}">難</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt12">
+        <label class="fld">測驗範圍（直接從課程樹勾選）</label>
+        ${tree}
+      </div>
+
+      <div class="preview mt12" id="q-preview">${quizPreviewHtml()}</div>
+
+      <div class="mt12 rowflex">
+        <button class="primary" id="q-add">加入測驗</button>
+        <span class="small muted">勾選細項會自動帶入所屬課題</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>所有測驗 <span class="badge">${list.length}</span></h2>
+      ${listHtml}
+    </div>
+  `;
+}
+
+function quizPreviewHtml(){
+  const subj = findSubject(draft.subjectId);
+  if (!subj) return '<span class="muted">請選擇科目</span>';
+
+  const items = [];
+  for (const tp of subj.topics)
+    for (const it of tp.items)
+      if (draft.itemIds.has(it.id)) items.push(it);
+
+  if (!items.length) return '<span class="muted">請勾選測驗範圍</span>';
+
+  const mult = ({1:1.0, 2:1.15, 3:1.35})[draft.difficulty] ?? 1;
+  const need = Math.round(items.reduce((a, it) => a + itemRemainingMin(it) * mult, 0) / 5) * 5;
+  const days = Math.max(1, daysBetween(todayStr(), draft.date));
+  const perDay = Math.ceil(need / days);
+
+  const notLearned = items.filter(it => (it.familiarity ?? 0) === 0);
+  let warn = '';
+  if (notLearned.length){
+    warn = `<div style="margin-top:6px;color:#b45309;font-size:12.5px;">
+      ⚠️ 有 ${notLearned.length} 個細項熟悉度為 0，測驗前由零開始風險較高。
+    </div>`;
+  }
+
+  return `
+    <div><span class="big">${fmtDur(need)}</span> <span class="muted">估算需要</span></div>
+    <div>距測驗 ${days} 日 → 平均每日 ${perDay} 分鐘</div>
+    <div class="muted">已選 ${items.length} 個細項</div>
+    ${warn}
+  `;
+}
+
+function updateQuizPreview(){
+  const el = document.getElementById('q-preview');
+  if (el) el.innerHTML = quizPreviewHtml();
+}
+
+/* =========================================================
+   渲染：課程樹
+   ========================================================= */
+function viewSubjects(){
+  const cards = state.subjects.map(subj => {
+    const remaining = subjectRemainingMin(subj);
+    const dse = daysBetween(todayStr(), subj.examDate);
+    const topicsHtml = subj.topics.map(tp => `
+      <div class="topic-group">
+        <div class="th">${esc(tp.name)}</div>
+        ${tp.items.map(it => `
+          <div class="item-row">
+            <div class="nm">${esc(it.name)}</div>
+            <input type="number" min="0" step="10" value="${it.estMin}"
+                   data-est="${it.id}" title="首次學習所需分鐘">
+            <input type="range" min="0" max="100" step="5" value="${Math.round((it.familiarity || 0) * 100)}"
+                   data-fam="${it.id}" title="熟悉度">
+            <div class="rem" id="rem-${it.id}">剩 ${itemRemainingMin(it)} 分</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
+
+    return `<div class="card">
+      <div class="subj-head">
+        <div class="dot" style="background:${subj.color}"></div>
+        <div class="nm">${esc(subj.name)}</div>
+        <div class="ex">
+          剩餘 ${fmtDur(remaining)} ·
+          DSE ${subj.examDate}（${dse >= 0 ? dse + ' 天' : '已過'}）
+        </div>
+      </div>
+      ${topicsHtml}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="banner ok">
+      <span>💡</span>
+      <div>調整「預估分鐘」及「熟悉度」，系統會即時重算剩餘時間，並反映到今日計劃同測驗估算。</div>
+    </div>
+    ${cards}
+  `;
+}
+
+/* =========================================================
+   渲染：設定
+   ========================================================= */
+function viewSettings(){
+  const s = state.settings;
+  const tl = dayTimeline(todayStr());
+  const freeMin = Math.max(0, tl.freeEnd - tl.freeStart);
+  const weekday = WD[weekdayOf(todayStr())];
+
+  const num = (key, label, extra = '') => `
+    <div>
+      <label class="fld">${label}</label>
+      <input type="number" min="0" step="5" data-setting="${key}" value="${s[key]}">
+      ${extra ? `<div class="small muted" style="margin-top:3px">${extra}</div>` : ''}
+    </div>`;
+
+  return `
+    <div class="card">
+      <h2>上學時間</h2>
+      <div class="grid2">
+        <div>
+          <label class="fld">上學時間</label>
+          <input type="time" data-setting="schoolStart" value="${s.schoolStart}">
+        </div>
+        <div>
+          <label class="fld">放學時間</label>
+          <input type="time" data-setting="schoolEnd" value="${s.schoolEnd}">
+        </div>
+        ${num('commuteHome', '放學通勤（分鐘）')}
+        ${num('windDown', '返家緩衝（分鐘）')}
+        ${num('dinner', '晚餐（分鐘）')}
+        <div>
+          <label class="fld">最遲溫習結束</label>
+          <input type="time" data-setting="bedtime" value="${s.bedtime}">
+        </div>
+        <div>
+          <label class="fld">週末開始時間</label>
+          <input type="time" data-setting="weekendStart" value="${s.weekendStart}">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>排程參數</h2>
+      <div class="grid2">
+        ${num('blockMin', '每個學習區塊（分鐘）')}
+        ${num('breakMin', '區塊之間休息（分鐘）')}
+      </div>
+      <div class="banner ok mt12">
+        <span>📅</span>
+        <div>今日（星期${weekday}）可用窗口 <b>${toTime(tl.freeStart)}–${toTime(tl.freeEnd)}</b>
+        ＝ <b>${fmtDur(freeMin)}</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>資料</h2>
+      <div class="rowflex">
+        <button class="ghost" data-action="reset">重設為示範資料</button>
+        <span class="small muted">所有資料只儲存在你的瀏覽器（localStorage）。</span>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   主渲染
+   ========================================================= */
+function render(){
+  // header
+  const now = new Date();
+  $('#todayLabel').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 · 星期${WD[now.getDay()]}`;
+
+  // 最近 DSE 倒數
+  let nearest = null;
+  for (const s of state.subjects){
+    const d = daysBetween(todayStr(), s.examDate);
+    if (d >= 0 && (!nearest || d < nearest.d)) nearest = { s, d };
+  }
+  $('#examCountdown').textContent = nearest
+    ? `DSE ${nearest.s.name} ${nearest.d} 天`
+    : '未有 DSE 日期';
+
+  document.querySelectorAll('#tabs button').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === activeTab));
+
+  const view = $('#view');
+  if (activeTab === 'today')         view.innerHTML = viewToday();
+  else if (activeTab === 'quizzes')  view.innerHTML = viewQuizzes();
+  else if (activeTab === 'subjects') view.innerHTML = viewSubjects();
+  else                               view.innerHTML = viewSettings();
+
+  saveState();
+}
+
+/* =========================================================
+   事件
+   ========================================================= */
+$('#tabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-tab]');
+  if (!b) return;
+  activeTab = b.dataset.tab;
+  render();
 });
 
-/* ── 設定 / 科目欄位變更 ── */
-document.addEventListener("change", e => {
-  const t = e.target;
+const view = $('#view');
 
-  if (t.dataset.set){
-    const k = t.dataset.set;
-    const v = (t.type === "number") ? Number(t.value) : t.value;
-    if (t.type === "number" && (!Number.isFinite(v) || v < 0)) return;
-    state.settings[k] = v;
-    save(); render(); return;
-  }
-
-  if (t.dataset.subjset){
-    const s = getSubject(t.dataset.id);
-    if (!s) return;
-    const k = t.dataset.subjset;
-    s[k] = (t.type === "number") ? Math.max(0, Number(t.value) || 0) : t.value;
-    save(); render(); return;
-  }
-
-  if (t.dataset.busy !== undefined){
-    const lines = t.value.split("\n").map(x => x.trim()).filter(Boolean);
-    const busy = [];
-    for (const ln of lines){
-      const m = /^(\d{1,2}:\d{2})\s*[-–~]\s*(\d{1,2}:\d{2})$/.exec(ln);
-      if (m) busy.push({ start:m[1], end:m[2] });
+/* ---- click ---- */
+view.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (btn){
+    const action = btn.dataset.action;
+    if (action === 'del-quiz'){
+      const id = btn.dataset.id;
+      state.quizzes = state.quizzes.filter(q => q.id !== id);
+      render();
+      return;
     }
-    state.settings.busy = busy;
-    save(); render(); return;
+    if (action === 'reset'){
+      if (confirm('確定要重設為示範資料嗎？現有資料會清除。')){
+        state = defaultState();
+        draft = null;
+        render();
+      }
+      return;
+    }
   }
 
-  if (t.id === "import-file"){
-    const f = t.files && t.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const obj = JSON.parse(String(reader.result));
-        if (!obj || !Array.isArray(obj.subjects)) throw new Error("格式錯誤");
-        obj.done = obj.done || {};
-        state = obj;
-        save(); render();
-        alert("匯入成功。");
-      } catch(err){ alert("匯入失敗：" + err.message); }
-    };
-    reader.readAsText(f);
-    t.value = "";
+  // 難度 segmented
+  const d = e.target.closest('#q-diff button');
+  if (d){
+    draft.difficulty = Number(d.dataset.d);
+    document.querySelectorAll('#q-diff button').forEach(b =>
+      b.classList.toggle('on', b === d));
+    updateQuizPreview();
+    return;
+  }
+
+  // 加入測驗
+  if (e.target.id === 'q-add'){
+    const subj = findSubject(draft.subjectId);
+    if (!subj) return;
+    if (!draft.itemIds.size){
+      alert('請至少勾選一個測驗範圍細項');
+      return;
+    }
+    const topicIds = [];
+    for (const tp of subj.topics)
+      if (tp.items.some(it => draft.itemIds.has(it.id))) topicIds.push(tp.id);
+
+    state.quizzes.push({
+      id: 'q' + Date.now(),
+      subjectId: draft.subjectId,
+      date: draft.date,
+      title: draft.title.trim() ||
+             (subj.name + ' Quiz – ' +
+              (subj.topics.find(t => t.id === topicIds[0])?.name || '')),
+      difficulty: draft.difficulty,
+      status: 'planned',
+      topicIds,
+      itemIds: [...draft.itemIds]
+    });
+    draft = newDraft();
+    render();
     return;
   }
 });
 
-/* ══════════════════════════════════════════════════════════
-   12. 細項編輯 modal
-   ══════════════════════════════════════════════════════════ */
-function openItemModal(sid, tid, iid){
-  const s = getSubject(sid);
-  if (!s) return;
-  const tp = s.topics.find(t => t.id === tid);
-  if (!tp) return;
-  const it = iid ? tp.items.find(i => i.id === iid) : null;
+/* ---- change ---- */
+view.addEventListener('change', e => {
+  const t = e.target;
 
-  const back = document.createElement("div");
-  back.className = "modal-back";
-  back.innerHTML = `<div class="modal">
-    <h3>${it ? "編輯細項" : "新增細項"} · ${esc(tp.name)}</h3>
-    <label>名稱
-      <input type="text" id="m-name" value="${it ? esc(it.name) : ""}" placeholder="例如：配方法、判別式">
-    </label>
-    <label>類型
-      <select id="m-kind">
-        ${Object.keys(UNIT_MIN).map(k =>
-          `<option value="${k}" ${it && it.kind === k ? "selected" : ""}>${KIND_LABEL[k]}（${UNIT_MIN[k]} 分／單位）</option>`
-        ).join("")}
-      </select>
-    </label>
-    <label>份量（節 / 組 / 題 / 篇）
-      <input type="number" id="m-amount" min="1" step="1" value="${it ? (it.amount ?? 1) : 1}">
-    </label>
-    <label>難度
-      <select id="m-diff">
-        ${[1,2,3].map(x => `<option value="${x}" ${it && it.difficulty === x ? "selected" : ""}>${DIFF_LB[x]}</option>`).join("")}
-      </select>
-    </label>
-    <label>熟悉度
-      <select id="m-fam">
-        ${FAM.map((f,i) => `<option value="${i}" ${it && (it.familiarity ?? 0) === i ? "selected" : ""}>${f}</option>`).join("")}
-      </select>
-    </label>
-    <div class="mbtns">
-      ${it ? `<button class="btn danger" data-m="del">刪除</button>` : ""}
-      <button class="btn" data-m="cancel">取消</button>
-      <button class="btn primary" data-m="save">儲存</button>
-    </div>
-  </div>`;
-  document.body.appendChild(back);
+  // 測驗表單：科目
+  if (t.id === 'q-subject'){
+    draft.subjectId = t.value;
+    draft.itemIds = new Set();
+    render();
+    return;
+  }
+  // 測驗表單：日期
+  if (t.id === 'q-date'){
+    draft.date = t.value;
+    updateQuizPreview();
+    return;
+  }
+  // 測驗表單：課題 checkbox
+  if (t.matches('[data-quiz-topic]')){
+    const subj = findSubject(draft.subjectId);
+    const tp = subj.topics.find(x => x.id === t.dataset.quizTopic);
+    if (!tp) return;
+    if (t.checked) tp.items.forEach(it => draft.itemIds.add(it.id));
+    else           tp.items.forEach(it => draft.itemIds.delete(it.id));
+    render();
+    return;
+  }
+  // 測驗表單：細項 checkbox
+  if (t.matches('[data-quiz-item]')){
+    const id = t.dataset.quizItem;
+    if (t.checked) draft.itemIds.add(id);
+    else           draft.itemIds.delete(id);
 
-  const close = () => back.remove();
-
-  back.addEventListener("click", e => {
-    if (e.target === back) return close();
-    const b = e.target.closest("[data-m]");
-    if (!b) return;
-    const m = b.dataset.m;
-
-    if (m === "cancel") return close();
-
-    if (m === "del"){
-      if (!confirm("確定刪除此細項？")) return;
-      tp.items = tp.items.filter(x => x.id !== iid);
-      close(); save(); render(); return;
+    // 同步課題 checkbox 視覺狀態
+    const subj = findSubject(draft.subjectId);
+    const tp = subj.topics.find(x => x.items.some(it => it.id === id));
+    if (tp){
+      const all = tp.items.every(it => draft.itemIds.has(it.id));
+      const cb = view.querySelector(`[data-quiz-topic="${tp.id}"]`);
+      if (cb) cb.checked = all;
     }
+    updateQuizPreview();
+    return;
+  }
 
-    if (m === "save"){
-      const name  = back.querySelector("#m-name").value.trim() || "未命名";
-      const kind  = back.querySelector("#m-kind").value;
-      const amount = Math.max(1, Number(back.querySelector("#m-amount").value) || 1);
-      const difficulty = Number(back.querySelector("#m-diff").value);
-      const familiarity = Number(back.querySelector("#m-fam").value);
+  // 設定
+  if (t.dataset.setting){
+    const key = t.dataset.setting;
+    state.settings[key] = t.type === 'number' ? Number(t.value) : t.value;
+    render();
+    return;
+  }
 
-      if (it){
-        Object.assign(it, { name, kind, amount, difficulty, familiarity });
-        if (familiarity < 4 && it.nextReviewAt && it.nextReviewAt <= ui.date && familiarity === 4) it.nextReviewAt = null;
-      } else {
-        tp.items.push({
-          id: `${tp.id}.i${Date.now().toString(36)}`,
-          name, kind, amount, difficulty, familiarity, nextReviewAt: null
-        });
-      }
-      close(); save(); render();
+  // 課程樹：預估分鐘
+  if (t.dataset.est){
+    const id = t.dataset.est;
+    for (const subj of state.subjects)
+      for (const tp of subj.topics)
+        for (const it of tp.items)
+          if (it.id === id) it.estMin = Math.max(0, Number(t.value) || 0);
+    render();
+    return;
+  }
+});
+
+/* ---- input（即時，不重繪） ---- */
+view.addEventListener('input', e => {
+  const t = e.target;
+
+  // 測驗名稱
+  if (t.id === 'q-title'){
+    draft.title = t.value;
+    return;
+  }
+
+  // 熟悉度 slider
+  if (t.dataset.fam){
+    const id = t.dataset.fam;
+    for (const subj of state.subjects)
+      for (const tp of subj.topics)
+        for (const it of tp.items)
+          if (it.id === id) it.familiarity = Number(t.value) / 100;
+    const remEl = document.getElementById('rem-' + id);
+    if (remEl){
+      for (const subj of state.subjects)
+        for (const tp of subj.topics)
+          for (const it of tp.items)
+            if (it.id === id) remEl.textContent = '剩 ' + itemRemainingMin(it) + ' 分';
     }
-  });
-}
+    return;
+  }
 
-/* ══════════════════════════════════════════════════════════
-   13. 啟動
-   ══════════════════════════════════════════════════════════ */
+  // 預估分鐘（即時更新剩餘顯示）
+  if (t.dataset.est){
+    const id = t.dataset.est;
+    for (const subj of state.subjects)
+      for (const tp of subj.topics)
+        for (const it of tp.items)
+          if (it.id === id) it.estMin = Math.max(0, Number(t.value) || 0);
+    const remEl = document.getElementById('rem-' + id);
+    if (remEl){
+      for (const subj of state.subjects)
+        for (const tp of subj.topics)
+          for (const it of tp.items)
+            if (it.id === id) remEl.textContent = '剩 ' + itemRemainingMin(it) + ' 分';
+    }
+    return;
+  }
+});
+
+/* =========================================================
+   啟動
+   ========================================================= */
 render();
 </script>
 </body>
