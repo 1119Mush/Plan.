@@ -17,7 +17,6 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 .app{max-width:1100px;margin:0 auto;padding:16px 16px 60px}
-/* ---------- topbar ---------- */
 .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:16px}
 .brand{display:flex;gap:12px;align-items:center}
 .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#6366f1);
@@ -29,7 +28,6 @@ body{
   color:var(--muted);cursor:pointer;font-family:inherit;transition:.15s}
 .tab:hover{background:#f3f0fd;color:var(--purple)}
 .tab.active{background:var(--purple);color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3)}
-/* ---------- panels ---------- */
 .panel{display:none;animation:fade .2s ease}
 .panel.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -37,7 +35,6 @@ body{
   box-shadow:0 1px 3px rgba(30,27,46,.04)}
 .card h2{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .card h2::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--purple)}
-/* ---------- buttons ---------- */
 .btn{font-family:inherit;border:1px solid var(--border);background:#fff;color:var(--text);
   padding:8px 14px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
 .btn:hover{border-color:var(--purple);color:var(--purple)}
@@ -49,7 +46,7 @@ body{
 .btn.danger{color:var(--red);border-color:transparent;background:#fee2e2}
 .btn.danger:hover{background:#fecaca;color:#b91c1c}
 .btn.wide{width:100%;margin-top:6px;padding:11px}
-/* ---------- calendar ---------- */
+.btn.done{background:#dcfce7;color:#15803d;border-color:transparent}
 .cal-nav{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .month-title{font-size:17px;font-weight:800;letter-spacing:.3px;min-width:130px;text-align:center}
 .cal-weekdays,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
@@ -67,21 +64,20 @@ body{
 .tag{font-size:10px;font-weight:700;color:#fff;border-radius:4px;padding:2px 4px;line-height:1.25;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tag.more{background:#a8a3bd;text-align:center}
-/* ---------- day detail ---------- */
 .detail-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .detail-head h2{margin:0}
-/* ---------- timeline ---------- */
 .timeline{display:flex;flex-direction:column;gap:6px}
 .tl-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;background:#faf9ff;border:1px solid #f0edfc}
 .tl-item.study{background:#f7f4ff;border-color:#e3d9fe}
 .tl-item.special{background:#fff8ec;border-color:#fde8c4}
 .tl-item.fixed{background:#f7f7fa;border-color:#eef0f4;opacity:.8}
+.tl-item.finished{opacity:.6}
 .tl-time{font-size:11px;font-weight:800;color:var(--muted);white-space:nowrap;min-width:88px;padding-top:2px}
-.tl-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.tl-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tl-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.tl-actions{margin-left:auto;display:flex;gap:5px;align-items:center;flex:none}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
 .dot.grey{background:#c3c7d4}
-/* ---------- forms ---------- */
 .field{margin-bottom:12px}
 .field>label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
 input,select,textarea{font-family:inherit;font-size:13px;color:var(--text);background:#fff;
@@ -95,7 +91,6 @@ input[type=number]{width:auto}
 .segmented button{border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:700;
   color:var(--muted);padding:6px 18px;border-radius:8px;cursor:pointer}
 .segmented button.on{background:#fff;color:var(--purple);box-shadow:0 1px 3px rgba(0,0,0,.1)}
-/* ---------- scope tree ---------- */
 .tree{max-height:340px;overflow:auto;border:1px solid var(--border);border-radius:11px;padding:8px;background:#fcfbff}
 .topic{margin-bottom:6px}
 .topic-head{display:flex;align-items:center;gap:8px;padding:6px 6px;border-radius:8px;background:#f3f0fd}
@@ -106,13 +101,11 @@ input[type=number]{width:auto}
 .item:hover{background:#f7f4ff}
 .item-name{flex:1}
 .item-min{font-size:11px;color:var(--muted);font-weight:600}
-.chk input,.item input{width:auto;margin:0;accent-color:var(--purple);cursor:pointer}
-/* ---------- preview ---------- */
+.item input{width:auto;margin:0;accent-color:var(--purple);cursor:pointer}
 .preview{border:1.5px solid #ddd0fd;background:#faf7ff;border-radius:12px;padding:12px;margin-bottom:12px}
 .preview .big{font-size:22px;font-weight:900;color:var(--purple-dark);letter-spacing:.5px}
 .preview .rows{display:flex;flex-wrap:wrap;gap:14px;margin-top:6px;font-size:12px;color:#5c5478}
 .warn{margin-top:8px;font-size:12px;color:#a16207;background:#fef3c7;border-radius:8px;padding:6px 9px;font-weight:600}
-/* ---------- quiz list ---------- */
 .qrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;background:#faf9ff;
   border:1px solid #f0edfc;margin-bottom:7px}
 .qrow .qname{font-weight:800;font-size:13px}
@@ -122,7 +115,6 @@ input[type=number]{width:auto}
 .badge.red{background:#fee2e2;color:#b91c1c}
 .badge.yellow{background:#fef3c7;color:#a16207}
 .badge.green{background:#dcfce7;color:#15803d}
-/* ---------- subject cards ---------- */
 .subj-card{border:1px solid var(--border);border-left:5px solid var(--purple);border-radius:14px;
   padding:14px;margin-bottom:12px;background:#fff}
 .subj-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
@@ -134,7 +126,7 @@ input[type=number]{width:auto}
 .item-row{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:12px;flex-wrap:wrap}
 .item-row .iname{flex:1;min-width:120px}
 .mini{width:58px;padding:4px 6px;font-size:12px;text-align:center}
-.slider{width:90px;accent-color:var(--purple);padding:0;border:0;background:transparent}
+.slider{width:110px;accent-color:var(--purple);padding:0;border:0;background:transparent}
 .fam-val{font-size:11px;font-weight:700;color:var(--purple);min-width:34px;text-align:right}
 .remain{font-size:11px;color:var(--muted);min-width:56px}
 .add-line{display:flex;gap:6px;margin-top:6px}
@@ -146,7 +138,6 @@ input[type=number]{width:auto}
 .color-row{display:flex;gap:7px;flex-wrap:wrap}
 .color-dot{width:26px;height:26px;border-radius:50%;border:3px solid transparent;cursor:pointer}
 .color-dot.on{border-color:#1f1b2e}
-/* ---------- misc ---------- */
 .empty{color:var(--muted);font-size:12.5px;text-align:center;padding:18px 0}
 .muted{color:var(--muted);font-size:12px}
 .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -154,12 +145,13 @@ input[type=number]{width:auto}
 .ov{background:#faf9ff;border:1px solid #f0edfc;border-radius:12px;padding:12px;text-align:center}
 .ov .num{font-size:18px;font-weight:900;color:var(--purple-dark)}
 .ov .lab{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
-.special-form{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:7px;align-items:end}
-@media(max-width:700px){.special-form{grid-template-columns:1fr 1fr}}
+.special-form{display:grid;grid-template-columns:1.4fr .9fr .9fr auto auto;gap:7px;align-items:end}
+@media(max-width:760px){.special-form{grid-template-columns:1fr 1fr}}
 .special-list{display:flex;flex-direction:column;gap:6px;margin-top:9px}
 .special-item{display:flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #fde8c4;
   border-radius:9px;padding:7px 10px;font-size:12.5px;font-weight:600}
 .special-item .sname{flex:1}
+.special-item .repeat-tag{font-size:10px;background:#f59e0b;color:#fff;border-radius:4px;padding:1px 5px;font-weight:800}
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#1f1b2e;color:#fff;
   padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;
   transition:.25s;z-index:99}
@@ -196,7 +188,7 @@ input[type=number]{width:auto}
 
 <script>
 /* =======================================================================
-   0. 工具（Bug 3 修正：toMin 加空值防護）
+   0. 工具
    ======================================================================= */
 const pad = n => String(n).padStart(2,'0');
 const toMin = s => {
@@ -229,183 +221,139 @@ const DIFF_MULT  = { easy:1.0, medium:1.15, hard:1.35 };
 const DIFF_COEF  = { easy:0.8, medium:1.0,  hard:1.3  };
 const DIFF_LABEL = { easy:'易', medium:'中', hard:'難' };
 const COLORS = ['#8b5cf6','#06b6d4','#22c55e','#f59e0b','#ef4444','#ec4899','#14b8a6','#6366f1','#f97316','#84cc16'];
+const DEFAULT_EST = 45; // 系統預設首次學習分鐘（不再由用戶設定）
 
 /* =======================================================================
-   2. 內置 DSE 科目庫
+   2. 內置 DSE 科目庫（與上一版相同）
    ======================================================================= */
 const LIBRARY = [
-/* ---- 中文授課 ---- */
 { key:'chi', name:'中國語文', color:'#ef4444', topics:[
   { name:'閱讀能力', items:[
-    { name:'文言文閱讀', est:120 },
-    { name:'白話文閱讀', est:120 },
-    { name:'篇章理解與分析', est:90 },
-    { name:'閱讀理解技巧', est:70 } ]},
+    { name:'文言文閱讀', est:120 },{ name:'白話文閱讀', est:120 },
+    { name:'篇章理解與分析', est:90 },{ name:'閱讀理解技巧', est:70 } ]},
   { name:'寫作能力', items:[
-    { name:'記敘文寫作', est:90 },
-    { name:'描寫文寫作', est:80 },
-    { name:'說明文寫作', est:80 },
-    { name:'議論文寫作', est:100 },
-    { name:'抒情文寫作', est:80 },
-    { name:'實用文寫作', est:60 } ]},
+    { name:'記敘文寫作', est:90 },{ name:'描寫文寫作', est:80 },
+    { name:'說明文寫作', est:80 },{ name:'議論文寫作', est:100 },
+    { name:'抒情文寫作', est:80 },{ name:'實用文寫作', est:60 } ]},
   { name:'聆聽與說話', items:[
-    { name:'聆聽理解', est:60 },
-    { name:'小組討論', est:60 },
-    { name:'個人短講', est:60 } ]},
+    { name:'聆聽理解', est:60 },{ name:'小組討論', est:60 },{ name:'個人短講', est:60 } ]},
   { name:'語文知識', items:[
-    { name:'字詞與語法', est:60 },
-    { name:'成語與修辭', est:60 },
-    { name:'詩詞曲背誦', est:90 },
-    { name:'標點與句式', est:40 } ]}
+    { name:'字詞與語法', est:60 },{ name:'成語與修辭', est:60 },
+    { name:'詩詞曲背誦', est:90 },{ name:'標點與句式', est:40 } ]}
 ]},
 { key:'csd', name:'公民與社會發展', color:'#f59e0b', topics:[
   { name:'「一國兩制」下的香港', items:[
-    { name:'香港的憲制地位', est:60 },
-    { name:'「一國兩制」的實踐', est:70 },
-    { name:'法治與司法制度', est:60 },
-    { name:'公共財政與經濟發展', est:55 },
+    { name:'香港的憲制地位', est:60 },{ name:'「一國兩制」的實踐', est:70 },
+    { name:'法治與司法制度', est:60 },{ name:'公共財政與經濟發展', est:55 },
     { name:'香港社會議題', est:60 } ]},
   { name:'改革開放以來的國家', items:[
-    { name:'經濟體制改革', est:65 },
-    { name:'社會發展與人民生活', est:55 },
-    { name:'科技與創新發展', est:55 },
-    { name:'環境保護與可持續發展', est:50 },
+    { name:'經濟體制改革', est:65 },{ name:'社會發展與人民生活', est:55 },
+    { name:'科技與創新發展', est:55 },{ name:'環境保護與可持續發展', est:50 },
     { name:'外交與「一帶一路」', est:50 } ]},
   { name:'互聯相依的當代世界', items:[
-    { name:'全球化趨勢', est:60 },
-    { name:'區域合作', est:50 },
-    { name:'國際組織與國際法', est:50 },
-    { name:'全球性議題', est:55 } ]}
+    { name:'全球化趨勢', est:60 },{ name:'區域合作', est:50 },
+    { name:'國際組織與國際法', est:50 },{ name:'全球性議題', est:55 } ]}
 ]},
 { key:'chist', name:'中國歷史', color:'#b45309', topics:[
   { name:'上古至秦漢', items:[
-    { name:'夏商周', est:60 }, { name:'春秋戰國', est:70 },
-    { name:'秦的統一與統治', est:55 }, { name:'兩漢政治與社會', est:70 } ]},
+    { name:'夏商周', est:60 },{ name:'春秋戰國', est:70 },
+    { name:'秦的統一與統治', est:55 },{ name:'兩漢政治與社會', est:70 } ]},
   { name:'魏晉至隋唐', items:[
-    { name:'三國兩晉南北朝', est:65 }, { name:'隋唐盛世', est:70 },
+    { name:'三國兩晉南北朝', est:65 },{ name:'隋唐盛世', est:70 },
     { name:'唐代制度與對外關係', est:60 } ]},
   { name:'宋元明清', items:[
-    { name:'宋代政治與經濟', est:65 }, { name:'元代統治', est:50 },
-    { name:'明代政治與社會', est:65 }, { name:'清代前期', est:65 } ]},
+    { name:'宋代政治與經濟', est:65 },{ name:'元代統治', est:50 },
+    { name:'明代政治與社會', est:65 },{ name:'清代前期', est:65 } ]},
   { name:'近代中國', items:[
-    { name:'鴉片戰爭與條約', est:60 }, { name:'太平天國', est:50 },
-    { name:'洋務運動', est:55 }, { name:'維新運動', est:55 },
-    { name:'辛亥革命', est:60 }, { name:'民國初年', est:55 },
-    { name:'抗日戰爭', est:60 }, { name:'國共內戰', est:50 } ]},
+    { name:'鴉片戰爭與條約', est:60 },{ name:'太平天國', est:50 },
+    { name:'洋務運動', est:55 },{ name:'維新運動', est:55 },
+    { name:'辛亥革命', est:60 },{ name:'民國初年', est:55 },
+    { name:'抗日戰爭', est:60 },{ name:'國共內戰', est:50 } ]},
   { name:'現代中國', items:[
-    { name:'中華人民共和國成立', est:50 }, { name:'社會主義建設', est:55 },
-    { name:'改革開放', est:60 }, { name:'當代中國發展', est:55 } ]}
+    { name:'中華人民共和國成立', est:50 },{ name:'社會主義建設', est:55 },
+    { name:'改革開放', est:60 },{ name:'當代中國發展', est:55 } ]}
 ]},
 { key:'hist', name:'歷史', color:'#a16207', topics:[
   { name:'香港史', items:[
-    { name:'開埠與殖民時期', est:60 }, { name:'日佔時期', est:45 },
-    { name:'戰後香港', est:60 }, { name:'回歸與發展', est:55 } ]},
+    { name:'開埠與殖民時期', est:60 },{ name:'日佔時期', est:45 },
+    { name:'戰後香港', est:60 },{ name:'回歸與發展', est:55 } ]},
   { name:'中國與世界', items:[
-    { name:'近代化歷程', est:65 }, { name:'對外關係', est:55 },
-    { name:'戰爭與和平', est:60 } ]},
+    { name:'近代化歷程', est:65 },{ name:'對外關係', est:55 },{ name:'戰爭與和平', est:60 } ]},
   { name:'世界史', items:[
-    { name:'第一次世界大戰', est:60 }, { name:'第二次世界大戰', est:65 },
-    { name:'冷戰', est:60 }, { name:'殖民地獨立', est:50 },
-    { name:'全球化', est:50 } ]}
+    { name:'第一次世界大戰', est:60 },{ name:'第二次世界大戰', est:65 },
+    { name:'冷戰', est:60 },{ name:'殖民地獨立', est:50 },{ name:'全球化', est:50 } ]}
 ]},
 { key:'geog', name:'地理', color:'#14b8a6', topics:[
   { name:'自然地理', items:[
-    { name:'地貌與板塊構造', est:65 }, { name:'氣候與天氣', est:65 },
-    { name:'水文與河流作用', est:55 }, { name:'土壤與生態系統', est:50 } ]},
+    { name:'地貌與板塊構造', est:65 },{ name:'氣候與天氣', est:65 },
+    { name:'水文與河流作用', est:55 },{ name:'土壤與生態系統', est:50 } ]},
   { name:'人文地理', items:[
-    { name:'人口與人口問題', est:55 }, { name:'農業與糧食', est:55 },
-    { name:'工業與製造業', est:55 }, { name:'城市化', est:60 },
-    { name:'交通與運輸', est:50 } ]},
+    { name:'人口與人口問題', est:55 },{ name:'農業與糧食', est:55 },
+    { name:'工業與製造業', est:55 },{ name:'城市化', est:60 },{ name:'交通與運輸', est:50 } ]},
   { name:'區域地理', items:[
-    { name:'中國地理', est:65 }, { name:'香港地理', est:50 },
-    { name:'世界主要區域', est:55 } ]},
+    { name:'中國地理', est:65 },{ name:'香港地理', est:50 },{ name:'世界主要區域', est:55 } ]},
   { name:'地圖與技能', items:[
-    { name:'地圖閱讀', est:50 }, { name:'數據與圖表分析', est:55 },
-    { name:'實地考察', est:45 } ]}
+    { name:'地圖閱讀', est:50 },{ name:'數據與圖表分析', est:55 },{ name:'實地考察', est:45 } ]}
 ]},
-/* ---- 英文授課 ---- */
 { key:'eng', name:'English Language', color:'#6366f1', topics:[
   { name:'Reading', items:[
-    { name:'Comprehension', est:90 }, { name:'Vocabulary Building', est:60 },
-    { name:'Text Types and Genres', est:60 }, { name:'Poetry and Prose', est:55 } ]},
+    { name:'Comprehension', est:90 },{ name:'Vocabulary Building', est:60 },
+    { name:'Text Types and Genres', est:60 },{ name:'Poetry and Prose', est:55 } ]},
   { name:'Writing', items:[
-    { name:'Essay Writing', est:90 }, { name:'Letter Writing', est:55 },
-    { name:'Report Writing', est:55 }, { name:'Argumentative Writing', est:70 } ]},
+    { name:'Essay Writing', est:90 },{ name:'Letter Writing', est:55 },
+    { name:'Report Writing', est:55 },{ name:'Argumentative Writing', est:70 } ]},
   { name:'Listening', items:[
-    { name:'Listening Comprehension', est:60 }, { name:'Note-taking', est:45 } ]},
+    { name:'Listening Comprehension', est:60 },{ name:'Note-taking', est:45 } ]},
   { name:'Speaking', items:[
-    { name:'Group Discussion', est:55 }, { name:'Individual Presentation', est:55 } ]},
+    { name:'Group Discussion', est:55 },{ name:'Individual Presentation', est:55 } ]},
   { name:'Language Arts', items:[
-    { name:'Short Stories', est:50 }, { name:'Poems', est:45 }, { name:'Drama', est:45 } ]}
+    { name:'Short Stories', est:50 },{ name:'Poems', est:45 },{ name:'Drama', est:45 } ]}
 ]},
 { key:'math', name:'Mathematics (Compulsory Part)', color:'#8b5cf6', topics:[
   { name:'Number and Algebra', items:[
-    { name:'Quadratic Equations', est:55 },
-    { name:'Functions and Graphs', est:55 },
-    { name:'Exponential and Logarithmic Functions', est:55 },
-    { name:'More about Graphs', est:45 },
-    { name:'Equations of Straight Lines', est:45 },
-    { name:'Inequalities and Linear Programming', est:55 },
-    { name:'Variations', est:35 },
-    { name:'Arithmetic and Geometric Sequences', est:50 } ]},
+    { name:'Quadratic Equations', est:55 },{ name:'Functions and Graphs', est:55 },
+    { name:'Exponential and Logarithmic Functions', est:55 },{ name:'More about Graphs', est:45 },
+    { name:'Equations of Straight Lines', est:45 },{ name:'Inequalities and Linear Programming', est:55 },
+    { name:'Variations', est:35 },{ name:'Arithmetic and Geometric Sequences', est:50 } ]},
   { name:'Measures, Shape and Space', items:[
-    { name:'Trigonometry', est:65 },
-    { name:'Coordinate Geometry', est:55 },
-    { name:'Equations of Circles', est:50 },
-    { name:'Vectors', est:55 },
+    { name:'Trigonometry', est:65 },{ name:'Coordinate Geometry', est:55 },
+    { name:'Equations of Circles', est:50 },{ name:'Vectors', est:55 },
     { name:'Area and Volume (Mensuration)', est:50 } ]},
   { name:'Data Handling', items:[
-    { name:'Permutation and Combination', est:50 },
-    { name:'Probability', est:60 },
-    { name:'Statistics (Measures of Dispersion)', est:60 },
-    { name:'Statistical Graphs and Charts', est:40 } ]}
+    { name:'Permutation and Combination', est:50 },{ name:'Probability', est:60 },
+    { name:'Statistics (Measures of Dispersion)', est:60 },{ name:'Statistical Graphs and Charts', est:40 } ]}
 ]},
 { key:'m2', name:'Mathematics Extended Part Module 2 (M2)', color:'#a855f7', topics:[
   { name:'Foundations', items:[
-    { name:'Odd and Even Functions', est:40 },
-    { name:'Mathematical Induction', est:50 },
-    { name:'Binomial Theorem', est:50 },
-    { name:'Trigonometry', est:55 },
-    { name:'e', est:35 },
-    { name:'Limits', est:55 } ]},
+    { name:'Odd and Even Functions', est:40 },{ name:'Mathematical Induction', est:50 },
+    { name:'Binomial Theorem', est:50 },{ name:'Trigonometry', est:55 },
+    { name:'e', est:35 },{ name:'Limits', est:55 } ]},
   { name:'Calculus', items:[
-    { name:'Differentiation', est:65 },
-    { name:'Applications of Differentiation', est:60 },
-    { name:'Indefinite Integration', est:60 },
-    { name:'Definite Integration', est:55 },
+    { name:'Differentiation', est:65 },{ name:'Applications of Differentiation', est:60 },
+    { name:'Indefinite Integration', est:60 },{ name:'Definite Integration', est:55 },
     { name:'Applications of Integration', est:55 } ]},
   { name:'Algebra', items:[
-    { name:'Determinants', est:45 },
-    { name:'Matrices', est:55 },
-    { name:'Systems of Linear Equations', est:50 },
-    { name:'Vectors', est:55 },
-    { name:'Scalar and Vector Products', est:50 },
-    { name:'Applications of Vectors', est:50 } ]}
+    { name:'Determinants', est:45 },{ name:'Matrices', est:55 },
+    { name:'Systems of Linear Equations', est:50 },{ name:'Vectors', est:55 },
+    { name:'Scalar and Vector Products', est:50 },{ name:'Applications of Vectors', est:50 } ]}
 ]},
 { key:'phy', name:'Physics', color:'#06b6d4', topics:[
   { name:'Heat and Gases', items:[
     { name:'Temperature, Heat and Internal Energy', est:45 },
     { name:'Heat Capacity and Specific Heat Capacity', est:50 },
     { name:'Change of State and Latent Heat', est:45 },
-    { name:'Gas Laws', est:50 },
-    { name:'Kinetic Theory', est:45 } ]},
+    { name:'Gas Laws', est:50 },{ name:'Kinetic Theory', est:45 } ]},
   { name:'Force and Motion', items:[
-    { name:'Position and Movement', est:40 },
-    { name:"Newton's Laws of Motion", est:60 },
-    { name:'Friction and Free-body Diagrams', est:50 },
-    { name:'Work, Energy and Power', est:50 },
-    { name:'Momentum and Impulse', est:45 },
-    { name:'Conservation of Momentum and Collisions', est:50 },
-    { name:'Projectile Motion', est:45 },
-    { name:'Uniform Circular Motion', est:45 },
+    { name:'Position and Movement', est:40 },{ name:"Newton's Laws of Motion", est:60 },
+    { name:'Friction and Free-body Diagrams', est:50 },{ name:'Work, Energy and Power', est:50 },
+    { name:'Momentum and Impulse', est:45 },{ name:'Conservation of Momentum and Collisions', est:50 },
+    { name:'Projectile Motion', est:45 },{ name:'Uniform Circular Motion', est:45 },
     { name:'Gravitation', est:50 } ]},
   { name:'Wave Motion', items:[
     { name:'Nature and Properties of Waves', est:45 },
     { name:'Reflection, Refraction, Diffraction and Interference', est:55 },
-    { name:'Stationary Waves', est:40 },
-    { name:'Reflection and Refraction of Light', est:50 },
-    { name:'Lenses and Optical Instruments', est:45 },
-    { name:'Sound and Musical Notes', est:40 } ]},
+    { name:'Stationary Waves', est:40 },{ name:'Reflection and Refraction of Light', est:50 },
+    { name:'Lenses and Optical Instruments', est:45 },{ name:'Sound and Musical Notes', est:40 } ]},
   { name:'Electricity and Magnetism', items:[
     { name:"Electrostatics (Electric Field, Potential, Coulomb's Law)", est:55 },
     { name:"Circuits (Ohm's Law, Series and Parallel, Power)", est:55 },
@@ -413,183 +361,122 @@ const LIBRARY = [
     { name:"Faraday's Law and Lenz's Law", est:45 },
     { name:'Transformers and Power Transmission', est:40 } ]},
   { name:'Radioactivity and Nuclear Energy', items:[
-    { name:'α, β, γ Radiation', est:40 },
-    { name:'Radioactive Decay and Half-life', est:45 },
-    { name:'Atomic Model and Energy Levels', est:40 },
-    { name:'Nuclear Fission and Fusion', est:40 },
+    { name:'α, β, γ Radiation', est:40 },{ name:'Radioactive Decay and Half-life', est:45 },
+    { name:'Atomic Model and Energy Levels', est:40 },{ name:'Nuclear Fission and Fusion', est:40 },
     { name:'Nuclear Power Generation', est:35 } ]}
 ]},
 { key:'chem', name:'Chemistry', color:'#22c55e', topics:[
   { name:'Microscopic World I', items:[
-    { name:'Atomic Structure', est:50 },
-    { name:'Periodic Table and Periodicity', est:50 },
-    { name:'Metallic Bonding', est:35 },
-    { name:'Ionic Bonding', est:45 },
-    { name:'Covalent Bonding', est:50 },
-    { name:'Structures and Properties of Substances', est:45 } ]},
+    { name:'Atomic Structure', est:50 },{ name:'Periodic Table and Periodicity', est:50 },
+    { name:'Metallic Bonding', est:35 },{ name:'Ionic Bonding', est:45 },
+    { name:'Covalent Bonding', est:50 },{ name:'Structures and Properties of Substances', est:45 } ]},
   { name:'Microscopic World II', items:[
-    { name:'Shapes of Molecules', est:45 },
-    { name:'Bond Polarity and Intermolecular Forces', est:50 },
+    { name:'Shapes of Molecules', est:45 },{ name:'Bond Polarity and Intermolecular Forces', est:50 },
     { name:'Solubility and Conductivity', est:40 } ]},
   { name:'Metals', items:[
-    { name:'Occurrence and Extraction of Metals', est:50 },
-    { name:'Reactivity of Metals', est:50 },
-    { name:'Reactions of Metals and Their Compounds', est:45 },
-    { name:'Corrosion and Protection', est:40 } ]},
+    { name:'Occurrence and Extraction of Metals', est:50 },{ name:'Reactivity of Metals', est:50 },
+    { name:'Reactions of Metals and Their Compounds', est:45 },{ name:'Corrosion and Protection', est:40 } ]},
   { name:'Acids and Bases', items:[
-    { name:'Acid-Base Theories', est:45 },
-    { name:'Strength of Acids and Bases', est:50 },
-    { name:'Indicators and pH', est:45 },
-    { name:'Salts and Neutralization', est:45 },
+    { name:'Acid-Base Theories', est:45 },{ name:'Strength of Acids and Bases', est:50 },
+    { name:'Indicators and pH', est:45 },{ name:'Salts and Neutralization', est:45 },
     { name:'Buffer Solutions', est:35 } ]},
   { name:'Redox Reactions, Chemical Cells and Electrolysis', items:[
-    { name:'Oxidation and Reduction', est:50 },
-    { name:'Chemical Cells', est:50 },
-    { name:'Electrolysis', est:50 } ]},
+    { name:'Oxidation and Reduction', est:50 },{ name:'Chemical Cells', est:50 },{ name:'Electrolysis', est:50 } ]},
   { name:'Chemical Reactions and Energy', items:[
-    { name:'Enthalpy Change', est:50 },
-    { name:"Hess's Law", est:45 },
-    { name:'Standard Enthalpy Changes', est:45 } ]},
+    { name:'Enthalpy Change', est:50 },{ name:"Hess's Law", est:45 },{ name:'Standard Enthalpy Changes', est:45 } ]},
   { name:'Rate of Reaction', items:[
-    { name:'Rate of Chemical Reactions', est:45 },
-    { name:'Factors Affecting Rate', est:45 },
+    { name:'Rate of Chemical Reactions', est:45 },{ name:'Factors Affecting Rate', est:45 },
     { name:'Activation Energy', est:40 } ]},
   { name:'Chemical Equilibrium', items:[
-    { name:'Dynamic Equilibrium', est:45 },
-    { name:'Equilibrium Constant', est:50 },
+    { name:'Dynamic Equilibrium', est:45 },{ name:'Equilibrium Constant', est:50 },
     { name:"Le Chatelier's Principle", est:50 } ]},
   { name:'Patterns in the Chemical World', items:[
-    { name:'Trends in Properties of Elements', est:50 },
-    { name:'Reactions of Selected Elements', est:50 } ]},
+    { name:'Trends in Properties of Elements', est:50 },{ name:'Reactions of Selected Elements', est:50 } ]},
   { name:'Organic Chemistry', items:[
-    { name:'Introduction to Organic Compounds', est:40 },
-    { name:'Homologous Series', est:50 },
-    { name:'Isomerism', est:50 },
-    { name:'Reactions of Alkanes and Alkenes', est:55 },
-    { name:'Alcohols and Ethers', est:50 },
-    { name:'Carboxylic Acids and Esters', est:50 },
+    { name:'Introduction to Organic Compounds', est:40 },{ name:'Homologous Series', est:50 },
+    { name:'Isomerism', est:50 },{ name:'Reactions of Alkanes and Alkenes', est:55 },
+    { name:'Alcohols and Ethers', est:50 },{ name:'Carboxylic Acids and Esters', est:50 },
     { name:'Polymers', est:50 } ]},
   { name:'Analytical Chemistry', items:[
-    { name:'Detection of Substances', est:45 },
-    { name:'Instrumental Analysis', est:45 } ]}
+    { name:'Detection of Substances', est:45 },{ name:'Instrumental Analysis', est:45 } ]}
 ]},
 { key:'bio', name:'Biology', color:'#84cc16', topics:[
   { name:'Cells and Molecules of Life', items:[
-    { name:'Cell Structure and Function', est:55 },
-    { name:'Biological Molecules', est:50 },
-    { name:'Enzymes', est:50 },
-    { name:'Cell Membrane and Transport', est:50 },
+    { name:'Cell Structure and Function', est:55 },{ name:'Biological Molecules', est:50 },
+    { name:'Enzymes', est:50 },{ name:'Cell Membrane and Transport', est:50 },
     { name:'Cell Cycle and Division', est:55 } ]},
   { name:'Genetics and Evolution', items:[
-    { name:'DNA and Gene Expression', est:60 },
-    { name:'Genetics and Inheritance', est:60 },
-    { name:'Variation and Mutation', est:50 },
-    { name:'Evolution and Classification', est:55 } ]},
+    { name:'DNA and Gene Expression', est:60 },{ name:'Genetics and Inheritance', est:60 },
+    { name:'Variation and Mutation', est:50 },{ name:'Evolution and Classification', est:55 } ]},
   { name:'Organisms and Environment', items:[
-    { name:'Ecosystem and Energy Flow', est:55 },
-    { name:'Nutrient Cycling', est:45 },
+    { name:'Ecosystem and Energy Flow', est:55 },{ name:'Nutrient Cycling', est:45 },
     { name:'Environmental Factors and Adaptations', est:50 },
     { name:'Ecological Succession and Conservation', est:45 } ]},
   { name:'Health and Diseases', items:[
-    { name:'Diseases and Immunity', est:55 },
-    { name:'Infectious Diseases and Public Health', est:50 },
-    { name:'Non-infectious Diseases', est:50 },
-    { name:'Biotechnology Applications', est:45 } ]}
+    { name:'Diseases and Immunity', est:55 },{ name:'Infectious Diseases and Public Health', est:50 },
+    { name:'Non-infectious Diseases', est:50 },{ name:'Biotechnology Applications', est:45 } ]}
 ]},
 { key:'ict', name:'Information and Communication Technology (ICT)', color:'#0ea5e9', topics:[
   { name:'Compulsory Part', items:[
-    { name:'Information Processing', est:50 },
-    { name:'Computer System Fundamentals', est:55 },
-    { name:'Internet and Its Applications', est:55 },
-    { name:'Basic Programming Concepts', est:65 },
+    { name:'Information Processing', est:50 },{ name:'Computer System Fundamentals', est:55 },
+    { name:'Internet and Its Applications', est:55 },{ name:'Basic Programming Concepts', est:65 },
     { name:'Social Impacts of ICT', est:45 } ]},
   { name:'Electives', items:[
-    { name:'Databases', est:60 },
-    { name:'Data Communications and Networking', est:60 },
+    { name:'Databases', est:60 },{ name:'Data Communications and Networking', est:60 },
     { name:'Multimedia Production and Web Site Development', est:55 },
     { name:'Software Development', est:60 } ]}
 ]},
 { key:'econ', name:'Economics', color:'#f97316', topics:[
   { name:'Basic Economic Concepts', items:[
-    { name:'Scarcity, Choice and Opportunity Cost', est:45 },
-    { name:'Economic Systems', est:40 },
+    { name:'Scarcity, Choice and Opportunity Cost', est:45 },{ name:'Economic Systems', est:40 },
     { name:'Production Possibility Frontier', est:40 } ]},
   { name:'Firms and Production', items:[
-    { name:'Production and Cost', est:50 },
-    { name:'Short Run and Long Run', est:45 },
-    { name:'Economies of Scale', est:40 },
-    { name:'Objectives of Firms', est:40 } ]},
+    { name:'Production and Cost', est:50 },{ name:'Short Run and Long Run', est:45 },
+    { name:'Economies of Scale', est:40 },{ name:'Objectives of Firms', est:40 } ]},
   { name:'Market and Price', items:[
-    { name:'Demand, Supply and Equilibrium', est:55 },
-    { name:'Elasticity', est:50 },
-    { name:'Price Control', est:45 },
-    { name:'Consumer and Producer Surplus', est:45 } ]},
+    { name:'Demand, Supply and Equilibrium', est:55 },{ name:'Elasticity', est:50 },
+    { name:'Price Control', est:45 },{ name:'Consumer and Producer Surplus', est:45 } ]},
   { name:'Competition and Market Structure', items:[
-    { name:'Perfect Competition', est:45 },
-    { name:'Monopoly', est:50 },
-    { name:'Monopolistic Competition', est:45 },
-    { name:'Oligopoly', est:50 } ]},
+    { name:'Perfect Competition', est:45 },{ name:'Monopoly', est:50 },
+    { name:'Monopolistic Competition', est:45 },{ name:'Oligopoly', est:50 } ]},
   { name:'Efficiency, Equity and the Role of Government', items:[
-    { name:'Market Failure', est:50 },
-    { name:'Externalities', est:50 },
-    { name:'Public Goods', est:40 },
-    { name:'Income Distribution', est:45 } ]},
+    { name:'Market Failure', est:50 },{ name:'Externalities', est:50 },
+    { name:'Public Goods', est:40 },{ name:'Income Distribution', est:45 } ]},
   { name:'Measurement of Economic Performance', items:[
-    { name:'National Income Accounting', est:50 },
-    { name:'GDP and GNP', est:45 },
-    { name:'Price Indices', est:45 },
-    { name:'Unemployment', est:45 } ]},
+    { name:'National Income Accounting', est:50 },{ name:'GDP and GNP', est:45 },
+    { name:'Price Indices', est:45 },{ name:'Unemployment', est:45 } ]},
   { name:'National Income Determination', items:[
-    { name:'Consumption and Investment', est:50 },
-    { name:'Multiplier', est:40 },
-    { name:'Fiscal Policy', est:45 },
-    { name:'AD-AS Model', est:50 } ]},
+    { name:'Consumption and Investment', est:50 },{ name:'Multiplier', est:40 },
+    { name:'Fiscal Policy', est:45 },{ name:'AD-AS Model', est:50 } ]},
   { name:'Money and Banking', items:[
-    { name:'Functions of Money', est:40 },
-    { name:'Banking System', est:45 },
-    { name:'Money Supply', est:45 },
-    { name:'Monetary Policy', est:45 } ]},
+    { name:'Functions of Money', est:40 },{ name:'Banking System', est:45 },
+    { name:'Money Supply', est:45 },{ name:'Monetary Policy', est:45 } ]},
   { name:'Macroeconomic Problems', items:[
-    { name:'Inflation', est:50 },
-    { name:'Business Cycle', est:45 },
-    { name:'Policy Comparisons', est:45 } ]},
+    { name:'Inflation', est:50 },{ name:'Business Cycle', est:45 },{ name:'Policy Comparisons', est:45 } ]},
   { name:'International Trade and Finance', items:[
-    { name:'Trade Theory', est:45 },
-    { name:'Trade Barriers', est:45 },
-    { name:'Exchange Rates', est:50 },
-    { name:'Balance of Payments', est:45 } ]}
+    { name:'Trade Theory', est:45 },{ name:'Trade Barriers', est:45 },
+    { name:'Exchange Rates', est:50 },{ name:'Balance of Payments', est:45 } ]}
 ]},
 { key:'bafs', name:'Business, Accounting and Financial Management (BAFS)', color:'#ec4899', topics:[
   { name:'Business Environment', items:[
-    { name:'Hong Kong Business Environment', est:50 },
-    { name:'Forms of Business Ownership', est:45 },
+    { name:'Hong Kong Business Environment', est:50 },{ name:'Forms of Business Ownership', est:45 },
     { name:'Business Ethics and Social Responsibility', est:40 } ]},
   { name:'Introduction to Management', items:[
-    { name:'Functions of Management', est:50 },
-    { name:'Organizational Structure', est:45 },
+    { name:'Functions of Management', est:50 },{ name:'Organizational Structure', est:45 },
     { name:'Management Skills', est:40 } ]},
   { name:'Introduction to Accounting', items:[
-    { name:'Functions of Accounting', est:40 },
-    { name:'Accounting Equation', est:40 },
-    { name:'Double Entry System', est:50 },
-    { name:'Journals and Ledgers', est:50 },
+    { name:'Functions of Accounting', est:40 },{ name:'Accounting Equation', est:40 },
+    { name:'Double Entry System', est:50 },{ name:'Journals and Ledgers', est:50 },
     { name:'Trial Balance', est:40 } ]},
   { name:'Preparation of Financial Statements', items:[
-    { name:'Income Statement', est:55 },
-    { name:'Statement of Financial Position', est:55 },
-    { name:'Adjusting Entries', est:50 },
-    { name:'Depreciation', est:45 },
-    { name:'Inventory Valuation', est:45 },
-    { name:'Bank Reconciliation Statement', est:45 } ]},
+    { name:'Income Statement', est:55 },{ name:'Statement of Financial Position', est:55 },
+    { name:'Adjusting Entries', est:50 },{ name:'Depreciation', est:45 },
+    { name:'Inventory Valuation', est:45 },{ name:'Bank Reconciliation Statement', est:45 } ]},
   { name:'Cost Accounting', items:[
-    { name:'Cost Classification', est:45 },
-    { name:'Costing Methods', est:45 },
-    { name:'Marginal and Absorption Costing', est:45 },
-    { name:'Cost-Volume-Profit Analysis', est:45 } ]},
+    { name:'Cost Classification', est:45 },{ name:'Costing Methods', est:45 },
+    { name:'Marginal and Absorption Costing', est:45 },{ name:'Cost-Volume-Profit Analysis', est:45 } ]},
   { name:'Decision Making', items:[
-    { name:'Relevant Costs', est:45 },
-    { name:'Pricing Decisions', est:45 },
-    { name:'Budgeting', est:50 } ]}
+    { name:'Relevant Costs', est:45 },{ name:'Pricing Decisions', est:45 },{ name:'Budgeting', est:50 } ]}
 ]}
 ];
 
@@ -620,7 +507,7 @@ function buildSubject(libKey, dseDate){
 }
 
 function seedState(){
-  const st = { settings: defaultSettings(), subjects: [], quizzes: [], specials: [], version: 3 };
+  const st = { settings: defaultSettings(), subjects: [], quizzes: [], specials: [], studyLog: {}, version: 3 };
   const phy = buildSubject('phy', '2027-04-10');
   const math = buildSubject('math', '2027-04-10');
   if(phy) st.subjects.push(phy);
@@ -636,6 +523,7 @@ try{
   if(!Array.isArray(state.subjects)) state.subjects = [];
   if(!Array.isArray(state.quizzes)) state.quizzes = [];
   if(!Array.isArray(state.specials)) state.specials = [];
+  if(!state.studyLog || typeof state.studyLog !== 'object') state.studyLog = {};
 }catch(e){ state = seedState(); }
 
 function save(){
@@ -644,6 +532,14 @@ function save(){
 
 const todayK = () => dateKey(new Date());
 const getSubject = id => state.subjects.find(s => s.id === id);
+
+function findItem(itemId){
+  for(const subj of state.subjects)
+    for(const tp of subj.topics)
+      for(const it of tp.items)
+        if(it.id === itemId) return it;
+  return null;
+}
 
 /* =======================================================================
    4. UI 狀態
@@ -680,29 +576,45 @@ function quizRemaining(q){
   return t * (DIFF_MULT[q.difficulty] || 1);
 }
 
+/** 每週重複的特別安排是否匹配某日 */
+function matchesSpecial(sp, dateStr){
+  if(sp.date === dateStr) return true;
+  if(sp.repeat === 'weekly'){
+    if(dateStr < sp.date) return false;
+    const d1 = parseKey(sp.date), d2 = parseKey(dateStr);
+    return d1.getDay() === d2.getDay();
+  }
+  return false;
+}
+
 /**
  * 某科目在某日的需求
- * 科目每日需求 = max(測驗需求, DSE 需求)
- * 測驗需求 = ceil(測驗總需時 ÷ max(1, 距測驗日數))
- * DSE 需求 = max(30, ceil(該科剩餘學習時間 ÷ max(1, 距DSE日數)))
+ * 小測修復：測驗需求按距離加權（7 日內 ×1.4、3 日內 ×1.8），
+ * 且只要有測驗需求，kind 即為 quiz，不再被 DSE 需求蓋過。
+ * 回傳 itemAllocations，時間分配細化到細項層級。
  */
 function subjectDemand(subj, dateStr){
   const qs = state.quizzes.filter(q => q.subjectId === subj.id && q.date >= dateStr);
-  let quizNeed = 0, cap = Infinity, urgency = 0, label = '', blocked = false;
+  let quizNeed = 0, cap = Infinity, urgency = 0, blocked = false;
   let nearestDist = Infinity;
+  const quizItemIds = new Set();
 
   for(const q of qs){
     const dist = dayDiff(dateStr, q.date);
-    if(dist === 0){ blocked = true; continue; }          // 測驗當日清零
-    if(dist === 1) cap = Math.min(cap, 90);              // 前 1 日上限 90 分鐘
+    if(dist === 0){ blocked = true; continue; }
+    if(dist === 1) cap = Math.min(cap, 90);
     const rem = quizRemaining(q);
-    quizNeed += Math.ceil(rem / Math.max(1, dist));
+    let weight = 1;
+    if(dist <= 3) weight = 1.8;
+    else if(dist <= 7) weight = 1.4;
+    quizNeed += Math.ceil(rem / Math.max(1, dist) * weight);
     const u = rem / Math.pow(Math.max(1, dist), 1.5) * (DIFF_COEF[q.difficulty] || 1);
     if(u > urgency) urgency = u;
-    if(dist < nearestDist){ nearestDist = dist; label = q.name; }
+    if(dist < nearestDist) nearestDist = dist;
+    (q.itemIds || []).forEach(id => quizItemIds.add(id));
   }
 
-  if(blocked) return null; // 測驗當日該科唔排
+  if(blocked) return null;
 
   let dseNeed = 0;
   if(subj.dseDate){
@@ -710,26 +622,42 @@ function subjectDemand(subj, dateStr){
     if(dd > 0) dseNeed = Math.max(30, Math.ceil(subjectRemaining(subj) / dd));
   }
 
-  let minutes = Math.max(quizNeed, dseNeed);
+  const minutes = Math.max(quizNeed, dseNeed);
   if(minutes <= 0) return null;
 
-  let kind = 'dse', lbl = 'DSE 溫習';
-  if(quizNeed > 0 && quizNeed >= dseNeed){
-    kind = 'quiz';
-    lbl = `測驗衝刺 · 距測驗 ${nearestDist} 天`;
-  }
+  const kind = quizNeed > 0 ? 'quiz' : 'dse';
+  const lbl = kind === 'quiz'
+    ? `測驗衝刺 · 距測驗 ${nearestDist} 天`
+    : 'DSE 溫習';
+
   if(urgency === 0 && subj.dseDate){
     const dd = Math.max(1, dayDiff(dateStr, subj.dseDate));
     urgency = subjectRemaining(subj) / Math.pow(dd, 1.5) * 0.6;
   }
 
+  /* 細項分配：測驗優先溫習測驗範圍，否則按剩餘時間 */
+  const itemAllocations = [];
+  subj.topics.forEach(tp => tp.items.forEach(it => {
+    const inQuiz = quizItemIds.has(it.id);
+    const rem = it.est * (1 - (it.fam || 0));
+    if(rem <= 0) return;
+    if(kind === 'quiz' && !inQuiz) return;
+    itemAllocations.push({
+      itemId: it.id, itemName: it.name,
+      topicId: tp.id, topicName: tp.name,
+      minutes: rem
+    });
+  }));
+  itemAllocations.sort((a,b) => b.minutes - a.minutes);
+
   return {
     subjectId: subj.id, subjectName: subj.name, color: subj.color,
-    minutes: Math.round(minutes), cap, urgency, kind, label: lbl
+    minutes: Math.round(minutes), cap, urgency, kind, label: lbl,
+    itemAllocations
   };
 }
 
-/** 計算某日完整日程（Bug 5 修正：週末加入晚餐顯示） */
+/** 計算某日完整日程 */
 function computeDayPlan(dateStr){
   const s = state.settings;
   const d = parseKey(dateStr);
@@ -740,7 +668,6 @@ function computeDayPlan(dateStr){
   if(weekend){
     winStart = toMin(s.weekendStart);
     winEnd = Math.max(winStart, toMin(s.latestEnd) - s.dinner);
-    // Bug 5：補上晚餐固定作息，與平日顯示一致
     if(winEnd < toMin(s.latestEnd)){
       items.push({ type:'fixed', name:'晚餐', start:winEnd, end:winEnd + s.dinner });
     }
@@ -756,9 +683,9 @@ function computeDayPlan(dateStr){
   }
   if(winEnd <= winStart) winEnd = winStart;
 
-  /* 特別安排 */
+  /* 特別安排（含每週重複） */
   const specials = state.specials
-    .filter(x => x.date === dateStr && x.start && x.end)
+    .filter(x => matchesSpecial(x, dateStr) && x.start && x.end)
     .map(x => ({ ...x, s: toMin(x.start), e: toMin(x.end) }))
     .filter(x => x.e > x.s)
     .sort((a,b) => a.s - b.s);
@@ -766,13 +693,17 @@ function computeDayPlan(dateStr){
 
   const busy = specials.map(x => [x.s, x.e]);
 
-  /* 需求排序 */
+  /* 需求排序：測驗科目永遠優先 */
   const demands = [];
   state.subjects.forEach(subj => {
     const dem = subjectDemand(subj, dateStr);
     if(dem && dem.minutes > 0) demands.push(dem);
   });
-  demands.sort((a,b) => b.urgency - a.urgency);
+  demands.sort((a,b) => {
+    if(a.kind === 'quiz' && b.kind !== 'quiz') return -1;
+    if(b.kind === 'quiz' && a.kind !== 'quiz') return 1;
+    return b.urgency - a.urgency;
+  });
 
   /* 分配區塊 */
   const placedSubjectIds = new Set();
@@ -782,13 +713,16 @@ function computeDayPlan(dateStr){
     if(placedSubjectIds.size >= (s.maxSubjects || 3)) break;
     let need = dem.minutes;
     if(isFinite(dem.cap)) need = Math.min(need, dem.cap);
-    let got = 0, cursor = cursorBase, guard = 0;
+    let got = 0, cursor = cursorBase, guard = 0, allocIdx = 0;
+
+    const allocs = dem.itemAllocations && dem.itemAllocations.length
+      ? dem.itemAllocations
+      : [{ itemId:null, itemName:'', topicId:null, topicName:'' }];
 
     while(got < need - 0.5 && guard++ < 60){
       const dur = Math.min(s.blockMinutes, need - got);
       if(dur < 5) break;
 
-      /* 找空位 */
       let slot = cursor, tries = 0;
       while(tries++ < 80){
         let conflictEnd = null;
@@ -800,13 +734,19 @@ function computeDayPlan(dateStr){
       }
       if(slot + dur > winEnd) break;
 
+      const alloc = allocs[allocIdx % allocs.length];
       items.push({
         type:'study', name: dem.subjectName, start: slot, end: slot + dur,
-        color: dem.color, kind: dem.kind, label: dem.label
+        color: dem.color, kind: dem.kind, label: dem.label,
+        subjectId: dem.subjectId,
+        itemId: alloc ? alloc.itemId : null,
+        itemName: alloc ? alloc.itemName : '',
+        topicName: alloc ? alloc.topicName : ''
       });
       busy.push([slot, slot + dur]);
       busy.sort((a,b) => a[0] - b[0]);
       got += dur;
+      allocIdx++;
       cursor = slot + dur + s.breakMinutes;
     }
     if(got > 0) placedSubjectIds.add(dem.subjectId);
@@ -817,7 +757,22 @@ function computeDayPlan(dateStr){
 }
 
 /* =======================================================================
-   6. 共用渲染片段
+   6. 完成記錄
+   ======================================================================= */
+function blockKey(b){ return `${b.subjectId}|${b.itemId}|${b.start}`; }
+function getDayLog(dateStr){ return state.studyLog[dateStr] || []; }
+function isBlockDone(dateStr, b){
+  return getDayLog(dateStr).some(x => blockKey(x) === blockKey(b));
+}
+function subjectStudied(subjId){
+  let t = 0;
+  Object.values(state.studyLog).forEach(arr =>
+    arr.forEach(x => { if(x.subjectId === subjId) t += x.minutes; }));
+  return t;
+}
+
+/* =======================================================================
+   7. 共用渲染片段
    ======================================================================= */
 function fmtDur(min){
   if(state.settings.timeFormat === 'hr'){
@@ -834,10 +789,22 @@ function timelineHtml(dateStr){
   return '<div class="timeline">' + plan.items.map(it => {
     const dur = it.end - it.start;
     let cls = 'tl-item', dot = '<span class="dot grey"></span>', sub = '固定作息';
+    let actions = '';
+
     if(it.type === 'study'){
       cls += ' study';
       dot = `<span class="dot" style="background:${it.color}"></span>`;
-      sub = it.label;
+      const parts = [it.topicName, it.itemName, it.label].filter(Boolean);
+      sub = parts.join(' · ');
+      const done = isBlockDone(dateStr, it);
+      if(done){
+        cls += ' finished';
+        actions = `<span class="badge green">✓ 已完成</span>`;
+      }else{
+        actions = `<button class="btn tiny done" data-act="mark-done"
+          data-date="${dateStr}" data-subject="${it.subjectId}" data-item="${it.itemId || ''}"
+          data-start="${it.start}" data-end="${it.end}">✓ 完成</button>`;
+      }
     }else if(it.type === 'special'){
       cls += ' special';
       dot = '<span class="dot" style="background:#f59e0b"></span>';
@@ -845,32 +812,37 @@ function timelineHtml(dateStr){
     }else{
       cls += ' fixed';
     }
+
     return `<div class="${cls}">
       <div class="tl-time">${fromMin(it.start)}–${fromMin(it.end)}</div>
-      <div>
+      <div style="flex:1">
         <div class="tl-name">${dot}${esc(it.name)}</div>
         <div class="tl-sub">${esc(sub)} · ${dur} 分鐘</div>
       </div>
+      <div class="tl-actions">${actions}</div>
     </div>`;
   }).join('') + '</div>';
 }
 
-/* Bug 1 修正：改用 data- 屬性，避免 ID 衝突 */
 function specialFormHtml(dateStr){
-  const list = state.specials.filter(x => x.date === dateStr);
+  const list = state.specials.filter(x => matchesSpecial(x, dateStr));
   return `
     <div class="special-form">
       <div class="field" style="margin:0"><label>事件名稱</label>
-        <input data-sp-name placeholder="例：家庭聚會"></div>
+        <input data-sp-name placeholder="例：補課"></div>
       <div class="field" style="margin:0"><label>開始</label>
         <input type="time" data-sp-start value="18:00"></div>
       <div class="field" style="margin:0"><label>結束</label>
         <input type="time" data-sp-end value="21:00"></div>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;white-space:nowrap;padding-bottom:8px">
+        <input type="checkbox" data-sp-repeat style="width:auto;accent-color:var(--purple)"> 每週重複
+      </label>
       <button class="btn primary" data-act="add-special" data-date="${dateStr}">加入</button>
     </div>
     ${list.length ? `<div class="special-list">${list.map(sp => `
       <div class="special-item">
         <span class="sname">${esc(sp.name)}　${sp.start || '—'}–${sp.end || '—'}</span>
+        ${sp.repeat === 'weekly' ? '<span class="repeat-tag">每週</span>' : ''}
         <button class="btn tiny danger" data-act="del-special" data-id="${sp.id}">✕</button>
       </div>`).join('')}</div>` : ''}
   `;
@@ -885,7 +857,7 @@ function countdownBadge(dist){
 }
 
 /* =======================================================================
-   7. 月曆面板
+   8. 月曆面板
    ======================================================================= */
 function renderCalendar(){
   const el = document.getElementById('panel-calendar');
@@ -903,7 +875,7 @@ function renderCalendar(){
     const isSel = ds === ui.selectedDate;
 
     const qs = state.quizzes.filter(q => q.date === ds);
-    const sps = state.specials.filter(x => x.date === ds);
+    const sps = state.specials.filter(x => matchesSpecial(x, ds));
 
     const qTags = qs.slice(0,2).map(q => {
       const subj = getSubject(q.subjectId);
@@ -973,7 +945,7 @@ function dayDetailHtml(ds){
 }
 
 /* =======================================================================
-   8. 今日面板
+   9. 今日面板
    ======================================================================= */
 function renderToday(){
   const el = document.getElementById('panel-today');
@@ -981,7 +953,6 @@ function renderToday(){
   const d = parseKey(tk);
   const plan = computeDayPlan(tk);
 
-  /* Bug 4 修正：用 Set 逐分鐘去重，重疊的特別安排不再重複扣除 */
   const specialMins = new Set();
   plan.items.filter(i => i.type === 'special').forEach(i => {
     const s = Math.max(i.start, plan.winStart), e = Math.min(i.end, plan.winEnd);
@@ -1039,13 +1010,12 @@ function renderToday(){
 }
 
 /* =======================================================================
-   9. 測驗面板
+   10. 測驗面板
    ======================================================================= */
 function renderQuiz(){
   const el = document.getElementById('panel-quiz');
   const f = ui.form;
 
-  /* Bug 2 修正：重置 subjectId 時同步清空 items */
   if(!f.subjectId && state.subjects.length) f.subjectId = state.subjects[0].id;
   if(f.subjectId && !getSubject(f.subjectId)){
     f.subjectId = state.subjects.length ? state.subjects[0].id : '';
@@ -1215,13 +1185,12 @@ function bindQuizForm(){
 }
 
 /* =======================================================================
-   10. 科目面板
+   11. 科目面板
    ======================================================================= */
 function renderSubjects(){
   const el = document.getElementById('panel-subjects');
   const tk = todayK();
   const added = new Set(state.subjects.map(s => s.libKey).filter(Boolean));
-
   const quick = LIBRARY.filter(l => !added.has(l.key));
 
   el.innerHTML = `
@@ -1255,6 +1224,9 @@ function renderSubjects(){
 
     <div class="card">
       <h2>已加入科目（${state.subjects.length}）</h2>
+      <p class="muted" style="margin-bottom:10px">
+        熟悉度由你調整；系統會根據你在時間表標示「✓ 完成」自動記錄實際溫習時間並提高熟悉度。
+      </p>
       ${state.subjects.length ? state.subjects.map(subj => subjectCardHtml(subj, tk)).join('')
         : '<p class="empty">尚未加入任何科目</p>'}
     </div>
@@ -1265,6 +1237,7 @@ function renderSubjects(){
 
 function subjectCardHtml(subj, tk){
   const remain = subjectRemaining(subj);
+  const studied = subjectStudied(subj.id);
   const dd = subj.dseDate ? dayDiff(tk, subj.dseDate) : null;
 
   return `<div class="subj-card" style="border-left-color:${subj.color}">
@@ -1276,7 +1249,8 @@ function subjectCardHtml(subj, tk){
       <button class="btn tiny danger" data-act="del-subject" data-id="${subj.id}">✕</button>
     </div>
     <div class="subj-meta">
-      剩餘學習時間 <b data-sremain="${subj.id}">${fmtDur(remain)}</b>
+      剩餘 <b data-sremain="${subj.id}">${fmtDur(remain)}</b>
+      · 已溫習 <b>${fmtDur(studied)}</b>
       ${subj.dseDate ? ` · DSE 倒數 <b>${dd}</b> 日` : ' · 未設定 DSE 日期'}
     </div>
 
@@ -1290,9 +1264,6 @@ function subjectCardHtml(subj, tk){
         ${tp.items.map(it => `
           <div class="item-row">
             <span class="iname">${esc(it.name)}</span>
-            <input type="number" class="mini" min="5" step="5" value="${it.est}"
-              data-est="${it.id}" title="預估首次學習分鐘">
-            <span class="muted">分</span>
             <input type="range" class="slider" min="0" max="100" step="5"
               value="${Math.round((it.fam || 0) * 100)}" data-fam="${it.id}">
             <span class="fam-val" data-famval="${it.id}">${Math.round((it.fam || 0) * 100)}%</span>
@@ -1302,7 +1273,6 @@ function subjectCardHtml(subj, tk){
           </div>`).join('')}
         <div class="add-line">
           <input placeholder="新細項名稱" data-newitem="${tp.id}">
-          <input type="number" class="mini" min="5" step="5" value="45" data-newmin="${tp.id}">
           <button class="btn tiny" data-act="add-item" data-sid="${subj.id}" data-tid="${tp.id}">＋</button>
         </div>
       </div>`).join('')}
@@ -1315,7 +1285,6 @@ function subjectCardHtml(subj, tk){
 }
 
 function bindSubjectInputs(){
-  /* 熟悉度滑桿 */
   document.querySelectorAll('input[data-fam]').forEach(inp => {
     inp.addEventListener('input', () => {
       const item = findItem(inp.dataset.fam);
@@ -1328,20 +1297,6 @@ function bindSubjectInputs(){
       save();
     });
   });
-  /* 預估分鐘 */
-  document.querySelectorAll('input[data-est]').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const item = findItem(inp.dataset.est);
-      if(!item) return;
-      const v = Math.max(5, Number(inp.value) || 5);
-      item.est = v;
-      document.querySelectorAll(`[data-remain="${item.id}"]`).forEach(e =>
-        e.textContent = '剩 ' + Math.round(item.est * (1 - item.fam)) + ' 分');
-      refreshSubjectRemain();
-      save();
-    });
-  });
-  /* DSE 日期 */
   document.querySelectorAll('input[data-dse]').forEach(inp => {
     inp.addEventListener('change', () => {
       const subj = getSubject(inp.dataset.dse);
@@ -1359,16 +1314,8 @@ function refreshSubjectRemain(){
   });
 }
 
-function findItem(itemId){
-  for(const subj of state.subjects)
-    for(const tp of subj.topics)
-      for(const it of tp.items)
-        if(it.id === itemId) return it;
-  return null;
-}
-
 /* =======================================================================
-   11. 設定面板
+   12. 設定面板
    ======================================================================= */
 function renderSettings(){
   const el = document.getElementById('panel-settings');
@@ -1449,7 +1396,7 @@ function renderSettings(){
 }
 
 /* =======================================================================
-   12. 主渲染
+   13. 主渲染
    ======================================================================= */
 function render(){
   document.querySelectorAll('.tab').forEach(b =>
@@ -1465,7 +1412,7 @@ function render(){
 }
 
 /* =======================================================================
-   13. 事件委派
+   14. 事件委派
    ======================================================================= */
 document.querySelectorAll('.tab').forEach(b => {
   b.addEventListener('click', () => { ui.tab = b.dataset.tab; render(); });
@@ -1476,7 +1423,6 @@ document.addEventListener('click', e => {
   if(!el) return;
   const act = el.dataset.act;
 
-  /* ---- 月曆 ---- */
   if(act === 'prev-month'){
     ui.viewMonth--;
     if(ui.viewMonth < 0){ ui.viewMonth = 11; ui.viewYear--; }
@@ -1498,7 +1444,7 @@ document.addEventListener('click', e => {
     renderCalendar(); return;
   }
 
-  /* ---- 特別安排（Bug 1 修正：用 closest 定位所屬表單） ---- */
+  /* ---- 特別安排 ---- */
   if(act === 'add-special'){
     const date = el.dataset.date;
     const form = el.closest('.special-form');
@@ -1506,17 +1452,46 @@ document.addEventListener('click', e => {
     const name  = form.querySelector('[data-sp-name]').value.trim();
     const start = form.querySelector('[data-sp-start]').value;
     const end   = form.querySelector('[data-sp-end]').value;
+    const repeat = form.querySelector('[data-sp-repeat]').checked ? 'weekly' : 'none';
     if(!name) return toast('請輸入事件名稱');
     if(start && end && toMin(end) <= toMin(start)) return toast('結束時間要遲過開始時間');
-    state.specials.push({ id: nid(), date, name, start, end });
+    state.specials.push({ id: nid(), date, name, start, end, repeat });
     save();
-    toast('已加入特別安排');
+    toast(repeat === 'weekly' ? '已加入每週重複安排' : '已加入特別安排');
     render();
     return;
   }
   if(act === 'del-special'){
     state.specials = state.specials.filter(x => x.id !== el.dataset.id);
     save(); render(); return;
+  }
+
+  /* ---- 完成學習區塊 ---- */
+  if(act === 'mark-done'){
+    const date = el.dataset.date;
+    const subjectId = el.dataset.subject;
+    const itemId = el.dataset.item;
+    const start = Number(el.dataset.start);
+    const end = Number(el.dataset.end);
+    const minutes = end - start;
+    if(!state.studyLog[date]) state.studyLog[date] = [];
+    const exists = state.studyLog[date].some(x =>
+      x.subjectId === subjectId && (x.itemId || '') === (itemId || '') && x.start === start);
+    if(!exists){
+      state.studyLog[date].push({ subjectId, itemId: itemId || null, start, end, minutes, done: true });
+      /* 自動提高熟悉度 */
+      if(itemId){
+        const item = findItem(itemId);
+        if(item){
+          const before = item.fam || 0;
+          item.fam = Math.min(1, before + minutes / Math.max(1, item.est));
+        }
+      }
+      save();
+      toast('已記錄，熟悉度已自動更新');
+    }
+    render();
+    return;
   }
 
   /* ---- 測驗 ---- */
@@ -1527,11 +1502,9 @@ document.addEventListener('click', e => {
     if(!f.date) return toast('請選擇測驗日期');
     if(!f.items.length) return toast('請勾選測驗範圍');
     state.quizzes.push({
-      id: nid(),
-      subjectId: subj.id,
+      id: nid(), subjectId: subj.id,
       name: f.name.trim() || `${subj.name} Quiz`,
-      date: f.date,
-      difficulty: f.difficulty,
+      date: f.date, difficulty: f.difficulty,
       itemIds: [...f.items]
     });
     f.items = []; f.name = '';
@@ -1606,16 +1579,15 @@ document.addEventListener('click', e => {
     const tp = subj.topics.find(t => t.id === el.dataset.tid);
     if(!tp) return;
     const nameInp = document.querySelector(`[data-newitem="${tp.id}"]`);
-    const minInp  = document.querySelector(`[data-newmin="${tp.id}"]`);
     const name = (nameInp.value || '').trim();
     if(!name) return toast('請輸入細項名稱');
-    tp.items.push({ id: nid(), name, est: Math.max(5, Number(minInp.value) || 45), fam: 0 });
+    tp.items.push({ id: nid(), name, est: DEFAULT_EST, fam: 0 });
     save(); render(); return;
   }
 
   /* ---- 設定 ---- */
   if(act === 'reset-all'){
-    if(confirm('確定重設？所有自訂科目、測驗、特別安排都會被清除。')){
+    if(confirm('確定重設？所有自訂科目、測驗、特別安排、溫習記錄都會被清除。')){
       state = seedState();
       save(); ui.tab = 'calendar';
       render(); toast('已重設為預設科目');
@@ -1624,14 +1596,13 @@ document.addEventListener('click', e => {
   }
 });
 
-/* 自訂科目名稱輸入保持 */
 document.addEventListener('input', e => {
   if(e.target.id === 'nsName') ui.newSubject.name = e.target.value;
   if(e.target.id === 'nsDate') ui.newSubject.dseDate = e.target.value;
 });
 
 /* =======================================================================
-   14. 啟動
+   15. 啟動
    ======================================================================= */
 render();
 </script>
